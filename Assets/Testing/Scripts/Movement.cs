@@ -20,48 +20,23 @@ public class Movement : MonoBehaviour
 
     void Update()
     {
+        Debug.Log(PlayerRigidbody2D.velocity.x);
         walkForce = walkThrust * Time.deltaTime;
 
         void ForceMovement()
         {
-            if (PlayerRigidbody2D.velocity.x <= maxVelocity)
+            if (Input.GetKey(KeyCode.A))
             {
-                if (Input.GetKey(KeyCode.A))
-                {
-                    transform.localEulerAngles = new UnityEngine.Vector3(0, 180, 0);
-                    PlayerRigidbody2D.AddForce(transform.right * walkForce, ForceMode2D.Force);
-                }
+                transform.localEulerAngles = new UnityEngine.Vector3(0, 180, 0);
+                walkForce = walkForce * (1 - (-PlayerRigidbody2D.velocity.x / maxVelocity));
+                PlayerRigidbody2D.AddForce(transform.right * walkForce, ForceMode2D.Force);
+            }
                 
-                if (Input.GetKey(KeyCode.D))
-                {
-                    transform.localEulerAngles = new UnityEngine.Vector3(0, 0, 0);
-                    PlayerRigidbody2D.AddForce(transform.right * walkForce, ForceMode2D.Force);
-                }
-            }
-            else
+            if (Input.GetKey(KeyCode.D))
             {
-                PlayerRigidbody2D.AddForce(transform.right * -(PlayerRigidbody2D.mass*(PlayerRigidbody2D.velocity.x-maxVelocity)), ForceMode2D.Force);
-                Debug.Log(PlayerRigidbody2D.velocity.x);
-            }
-            
-            if (PlayerRigidbody2D.velocity.x >= -maxVelocity)
-            {
-                if (Input.GetKey(KeyCode.A))
-                {
-                    transform.localEulerAngles = new UnityEngine.Vector3(0, 180, 0);
-                    PlayerRigidbody2D.AddForce(transform.right * walkForce, ForceMode2D.Force);
-                }
-                
-                if (Input.GetKey(KeyCode.D))
-                {
-                    transform.localEulerAngles = new UnityEngine.Vector3(0, 0, 0);
-                    PlayerRigidbody2D.AddForce(transform.right * walkForce, ForceMode2D.Force);
-                }
-            }
-            else
-            {
-                PlayerRigidbody2D.AddForce(transform.right * (PlayerRigidbody2D.mass*(PlayerRigidbody2D.velocity.x-(-maxVelocity))), ForceMode2D.Force);
-                Debug.Log(PlayerRigidbody2D.velocity.x);
+                transform.localEulerAngles = new UnityEngine.Vector3(0, 0, 0);
+                walkForce = walkForce * (1 - (PlayerRigidbody2D.velocity.x / maxVelocity));
+                PlayerRigidbody2D.AddForce(transform.right * walkForce, ForceMode2D.Force);
             }
 
             //if (PlayerIsNotInTheAir)
