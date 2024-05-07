@@ -1,149 +1,80 @@
 ﻿using UnityEngine;
-using Vector2 = UnityEngine.Vector2;
+using UnityEngine.Serialization;
+using Vector3 = System.Numerics.Vector3;
 
-namespace Testing.Scripts
+public class Movement : MonoBehaviour
 {
-    [RequireComponent(typeof(Rigidbody2D), typeof(Collider2D))]
-    public class Movement : MonoBehaviour
-    {
-        [Header("Setup")]
-        [SerializeField] LayerMask groundLayer;
-        
-        [Header("Keys")]
-        [SerializeField] KeyCode moveLeftKey = KeyCode.A;
-        [SerializeField] KeyCode moveRightKey = KeyCode.D;
-        [SerializeField] KeyCode jumpKey = KeyCode.Space;
-        [SerializeField] KeyCode moveFastKey = KeyCode.LeftShift;
-        [SerializeField] KeyCode moveSlowKey = KeyCode.C;
-        
-        [Header("Modifiers")]
-        [SerializeField, Range(1, 500)] float horizontalAcceleration = 150f;
-        [SerializeField, Range(1, 500)] float horizontalMaxSpeed = 15f;
-        [SerializeField, Range(1, 500)] float horizontalMoveFastMaxSpeed = 20f;
-        [SerializeField, Range(1, 500)] float horizontalMoveSlowMaxSpeed = 5f;
-        [SerializeField, Range(1, 100)] float jumpForce = 4.5f;
-        [SerializeField, Range(0, 1f)] float slide = 0.5f;
-        [SerializeField, Range(0, 1f)] float movementSmoothing = 0.01f;
-        [SerializeField, Range(0.1f, 1f)] float collisionBoxLength = 0.1f;
-        [SerializeField, Range(0.01f, 1f)] float collisionBoxSize = 0.90f;
 
-        Rigidbody2D rb2d;
-        Collider2D collider2d;
-        KeyCode currentInput = KeyCode.None;
-        Vector2 currentVelocity = Vector2.zero;
-        // Need this flag as FixedUpdate() might not pick up on quick tap of the jump key.
-        bool wasJumpPressed;
-        bool isMovingFast;
-        bool isMovingSlow;
+    public Rigidbody2D PlayerRigidbody2D;
 
-        void Start()
-        {
-            this.rb2d = this.GetComponent<Rigidbody2D>();
-            this.collider2d = this.GetComponent<Collider2D>();
-
-            if (this.groundLayer.value == 0)
-            {
-                Debug.LogWarning(
-                    $"{nameof(Movement)}: It seems that the layer mask has not been set. Jumping might not work!");
-            }
-        }
+    public float walkThrust;
+    float walkForce;
+    public float jumpForce;
     
-        void Update()
-        {
-            this.GetInput();
-        }
+    public float maxVelocity;
 
-        void FixedUpdate()
-        {
-            this.HandleJump();
-            this.HandleHorizontalMovement();
-        }
-
-        void HandleHorizontalMovement()
-        {
-            var velocity = this.rb2d.velocity;
-            var switchedDirection = (this.currentInput == this.moveLeftKey && velocity.x > 0f) ||
-                                    (this.currentInput == this.moveRightKey && velocity.x < 0f);
+    void Start()
+    {
         
-            var result = switchedDirection ? 0f : velocity.x;
-            var maxSpeedToUse = this.isMovingFast ?
-                this.horizontalMoveFastMaxSpeed :
-                this.isMovingSlow ?
-                this.horizontalMoveSlowMaxSpeed :
-                this.horizontalMaxSpeed;
+    }
 
-            if (this.currentInput == this.moveLeftKey && result > -maxSpeedToUse)
+    void Update()
+    {
+        walkForce = walkThrust * Time.deltaTime;
+
+        void ForceMovement()
+        {
+            if (PlayerRigidbody2D.velocity.x <= maxVelocity)
             {
-                result -= this.horizontalAcceleration * Time.deltaTime;
-            }
-            else if (this.currentInput == this.moveLeftKey)
-            {
-                result = -maxSpeedToUse;
-            }
-            else if (this.currentInput == this.moveRightKey && result < maxSpeedToUse)
-            {
-                result += this.horizontalAcceleration * Time.deltaTime;
-            }
-            else if (this.currentInput == this.moveRightKey)
-            {
-                result = maxSpeedToUse;
+                if (Input.GetKey(KeyCode.A))
+                {
+                    transform.localEulerAngles = new UnityEngine.Vector3(0, 180, 0);
+                    PlayerRigidbody2D.AddForce(transform.right * walkForce, ForceMode2D.Force);
+                }
+                
+                if (Input.GetKey(KeyCode.D))
+                {
+                    transform.localEulerAngles = new UnityEngine.Vector3(0, 0, 0);
+                    PlayerRigidbody2D.AddForce(transform.right * walkForce, ForceMode2D.Force);
+                }
             }
             else
             {
-                result *= this.slide;
+                PlayerRigidbody2D.AddForce(transform.right * -(PlayerRigidbody2D.mass*(PlayerRigidbody2D.velocity.x-maxVelocity)), ForceMode2D.Force);
+                Debug.Log(PlayerRigidbody2D.velocity.x);
             }
-
-            this.rb2d.velocity = Vector2.SmoothDamp(
-                current: velocity,
-                target: new Vector2(result, velocity.y),
-                currentVelocity: ref this.currentVelocity,
-                smoothTime: this.movementSmoothing);
-        }
-
-        void HandleJump()
-        {
-            if (!this.wasJumpPressed) return;
-
-            this.wasJumpPressed = false;
-
-            if (this.IsColliding(Vector2.down))
-            {
-                this.rb2d.AddForce(new Vector2(0f, this.jumpForce * this.rb2d.gravityScale), ForceMode2D.Impulse);
-            }
-        }
-
-        bool IsColliding(Vector2 direction)
-        {
-            var playerBounds = this.collider2d.bounds;
-            var hit = Physics2D.BoxCast(
-                origin: playerBounds.center,
-                size: playerBounds.size * this.collisionBoxSize,
-                angle: 0f,
-                direction: direction,
-                distance: this.collisionBoxLength,
-                layerMask: this.groundLayer);
-
-            return hit.collider != null;
-        }
-
-        void GetInput()
-        {
-            this.isMovingFast = Input.GetKey(this.moveFastKey);
-            this.isMovingSlow = Input.GetKey(this.moveSlowKey);
-            this.wasJumpPressed = Input.GetKey(this.jumpKey);
             
-            if (Input.GetKey(this.moveRightKey))
+            if (PlayerRigidbody2D.velocity.x >= -maxVelocity)
             {
-                this.currentInput = this.moveRightKey;
-            }
-            else if (Input.GetKey(this.moveLeftKey))
-            {
-                this.currentInput = this.moveLeftKey;
+                if (Input.GetKey(KeyCode.A))
+                {
+                    transform.localEulerAngles = new UnityEngine.Vector3(0, 180, 0);
+                    PlayerRigidbody2D.AddForce(transform.right * walkForce, ForceMode2D.Force);
+                }
+                
+                if (Input.GetKey(KeyCode.D))
+                {
+                    transform.localEulerAngles = new UnityEngine.Vector3(0, 0, 0);
+                    PlayerRigidbody2D.AddForce(transform.right * walkForce, ForceMode2D.Force);
+                }
             }
             else
             {
-                this.currentInput = KeyCode.None;
+                PlayerRigidbody2D.AddForce(transform.right * (PlayerRigidbody2D.mass*(PlayerRigidbody2D.velocity.x-(-maxVelocity))), ForceMode2D.Force);
+                Debug.Log(PlayerRigidbody2D.velocity.x);
+            }
+
+            //if (PlayerIsNotInTheAir)
+            {
+                if (Input.GetKey(KeyCode.Space))
+                {
+                    PlayerRigidbody2D.AddForce(transform.up * jumpForce, ForceMode2D.Force);
+                }
             }
         }
+
+
+
+        ForceMovement();
     }
 }
