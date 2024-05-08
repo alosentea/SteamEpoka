@@ -132,7 +132,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.64, y: 0.64}
+  m_Size: {x: 0.61, y: 0.61}
   m_EdgeRadius: 0
 --- !u!114 &-662643064219107203
 MonoBehaviour:
@@ -148,5 +148,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PlayerRigidbody2D: {fileID: -9058177110110073701}
   walkThrust: 1000
-  jumpForce: 2
   maxVelocity: 5
+  jumpForce: 25
+  raycastDistance: 0.33
+  rayLayer:
+    serializedVersion: 2
+    m_Bits: 1024

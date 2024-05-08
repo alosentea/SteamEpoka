@@ -221,7 +221,7 @@ GameObject:
   - component: {fileID: 895265701}
   - component: {fileID: 895265703}
   - component: {fileID: 895265702}
-  m_Layer: 3
+  m_Layer: 10
   m_Name: TileMap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
