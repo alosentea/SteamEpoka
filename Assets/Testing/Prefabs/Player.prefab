@@ -149,8 +149,9 @@ MonoBehaviour:
   PlayerRigidbody2D: {fileID: -9058177110110073701}
   walkThrust: 1000
   maxVelocity: 5
-  jumpForce: 25
+  jumpImpulse: 10
   raycastDistance: 0.33
+  jumpYVelocityError: 0.05
   rayLayer:
     serializedVersion: 2
     m_Bits: 1024

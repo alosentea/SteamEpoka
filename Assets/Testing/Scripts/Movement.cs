@@ -11,9 +11,11 @@ public class Movement : MonoBehaviour
     float walkForce;
     public float maxVelocity;
 
-    public float jumpForce;
+    public float jumpImpulse;
     public float raycastDistance;
+    public float jumpYVelocityError;
     public LayerMask rayLayer;
+    int inAir = 0;
 
     void Start()
     {
@@ -49,9 +51,20 @@ public class Movement : MonoBehaviour
             {
                 if (JumpRay.collider != null)
                 {
-                    if (PlayerRigidbody2D.velocity.y <= 0)
+                    if (PlayerRigidbody2D.velocity.y >= 0-jumpYVelocityError && PlayerRigidbody2D.velocity.y <= 0+jumpYVelocityError)
                     {
-                        PlayerRigidbody2D.AddForce(transform.up * jumpForce, ForceMode2D.Force);
+                        if (inAir == 0)
+                        {
+                            PlayerRigidbody2D.AddForce(transform.up * jumpImpulse, ForceMode2D.Impulse);
+                            inAir = 1;
+                        }
+                    }
+                }
+                else
+                {
+                    if(inAir == 1)
+                    {
+                        inAir = 0;
                     }
                 }
             }
