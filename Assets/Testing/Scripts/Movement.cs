@@ -17,6 +17,10 @@ public class Movement : MonoBehaviour
     public LayerMask rayLayer;
     int inAir = 0;
 
+    public Collider2D PlayerCollider;
+    Collider2D PlatformCollider;
+    bool falling = false;
+
     void Start()
     {
         
@@ -28,8 +32,8 @@ public class Movement : MonoBehaviour
         walkForce = walkThrust * Time.deltaTime;
 
         RaycastHit2D JumpRay = Physics2D.Raycast(transform.position, -transform.up, raycastDistance, rayLayer);
-        Debug.DrawLine(transform.position, new Vector2(transform.position.x, transform.position.y-raycastDistance), Color.red);
-        Debug.Log(JumpRay.collider);
+        Debug.DrawLine(transform.position, new Vector2(transform.position.x, transform.position.y - raycastDistance), Color.red);
+        //Debug.Log(JumpRay.collider);
 
         void ForceMovement()
         {
@@ -57,6 +61,12 @@ public class Movement : MonoBehaviour
                         {
                             PlayerRigidbody2D.AddForce(transform.up * jumpImpulse, ForceMode2D.Impulse);
                             inAir = 1;
+
+                            if (falling == true)
+                            {
+                                Physics2D.IgnoreCollision(PlayerCollider, PlatformCollider, false);
+                                falling = false;
+                            }
                         }
                     }
                 }
@@ -67,6 +77,13 @@ public class Movement : MonoBehaviour
                         inAir = 0;
                     }
                 }
+            }
+
+            if (Input.GetKey(KeyCode.S))
+            {
+                PlatformCollider = JumpRay.collider;
+                Physics2D.IgnoreCollision(PlayerCollider, PlatformCollider, true);
+                falling = true;
             }
         }
 

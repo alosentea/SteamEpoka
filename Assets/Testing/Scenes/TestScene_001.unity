@@ -870,7 +870,7 @@ GameObject:
   - component: {fileID: 1976268115}
   - component: {fileID: 1976268111}
   m_Layer: 10
-  m_Name: Platforms
+  m_Name: PlatformsA
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
