@@ -81,9 +81,15 @@ public class Movement : MonoBehaviour
 
             if (Input.GetKey(KeyCode.S))
             {
-                PlatformCollider = JumpRay.collider;
-                Physics2D.IgnoreCollision(PlayerCollider, PlatformCollider, true);
-                falling = true;
+                if (JumpRay.collider != null)
+                {
+                    if (falling == false)
+                    {
+                        PlatformCollider = JumpRay.collider;
+                        Physics2D.IgnoreCollision(PlayerCollider, PlatformCollider, true);
+                        falling = true;
+                    }
+                }
             }
         }
 
