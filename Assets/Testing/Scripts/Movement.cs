@@ -1,22 +1,23 @@
 ﻿using UnityEngine;
-using UnityEngine.Serialization;
-using Vector3 = System.Numerics.Vector3;
 
 public class Movement : MonoBehaviour
 {
-
+    // Player Rigidbody2D Component //
     public Rigidbody2D PlayerRigidbody2D;
 
+    // "Walk" variables//
     public float walkThrust;
     float walkForce;
     public float maxVelocity;
 
+    // "Jump" variables //
     public float jumpImpulse;
     public float raycastDistance;
     public float jumpYVelocityError;
     public LayerMask rayLayer;
-    int inAir = 0;
+    bool inAir = false;
 
+    // "Fall through platform" variables //
     public Collider2D PlayerCollider;
     Collider2D PlatformCollider;
     bool falling = false;
@@ -28,42 +29,48 @@ public class Movement : MonoBehaviour
 
     void Update()
     {
-        //Debug.Log(PlayerRigidbody2D.velocity.x);
+        
         walkForce = walkThrust * Time.deltaTime;
-
+        
         RaycastHit2D JumpRay = Physics2D.Raycast(transform.position, -transform.up, raycastDistance, rayLayer);
-        Debug.DrawLine(transform.position, new Vector2(transform.position.x, transform.position.y - raycastDistance), Color.red);
-        //Debug.Log(JumpRay.collider);
+        // Debugging //
+        // Debug.DrawLine(transform.position, new Vector2(transform.position.x, transform.position.y - raycastDistance), Color.red);
 
-        void ForceMovement()
+        
+        
+        void HorizontalMovement()
         {
-            if (Input.GetKey(KeyCode.A))
+            if (Input.GetKey(KeyCode.A)) // "Left walk" key
             {
                 transform.localEulerAngles = new UnityEngine.Vector3(0, 180, 0);
                 walkForce = walkForce * (1 - (-PlayerRigidbody2D.velocity.x / maxVelocity));
                 PlayerRigidbody2D.AddForce(transform.right * walkForce, ForceMode2D.Force);
             }
                 
-            if (Input.GetKey(KeyCode.D))
+            if (Input.GetKey(KeyCode.D)) // "Right walk" key
             {
                 transform.localEulerAngles = new UnityEngine.Vector3(0, 0, 0);
                 walkForce = walkForce * (1 - (PlayerRigidbody2D.velocity.x / maxVelocity));
                 PlayerRigidbody2D.AddForce(transform.right * walkForce, ForceMode2D.Force);
             }
-
-            if (Input.GetKey(KeyCode.Space))
+        }
+        void VerticalMovement()
+        {
+            if (Input.GetKey(KeyCode.Space)) // "Jump" key
             {
                 if (JumpRay.collider != null)
                 {
                     if (PlayerRigidbody2D.velocity.y >= 0-jumpYVelocityError && PlayerRigidbody2D.velocity.y <= 0+jumpYVelocityError)
                     {
-                        if (inAir == 0)
+                        if (inAir == false)
                         {
+                            // Vertical impulse //
                             PlayerRigidbody2D.AddForce(transform.up * jumpImpulse, ForceMode2D.Impulse);
-                            inAir = 1;
+                            inAir = true;
 
                             if (falling == true)
                             {
+                                // Platform collider reactivation //
                                 Physics2D.IgnoreCollision(PlayerCollider, PlatformCollider, false);
                                 falling = false;
                             }
@@ -72,19 +79,20 @@ public class Movement : MonoBehaviour
                 }
                 else
                 {
-                    if(inAir == 1)
+                    if(inAir == true)
                     {
-                        inAir = 0;
+                        inAir = false;
                     }
                 }
             }
-
-            if (Input.GetKey(KeyCode.S))
+            
+            if (Input.GetKey(KeyCode.S)) // "Fall through platform" key
             {
                 if (JumpRay.collider != null)
                 {
                     if (falling == false)
                     {
+                        // Platform collider deactivation //
                         PlatformCollider = JumpRay.collider;
                         Physics2D.IgnoreCollision(PlayerCollider, PlatformCollider, true);
                         falling = true;
@@ -92,9 +100,8 @@ public class Movement : MonoBehaviour
                 }
             }
         }
-
-
-
-        ForceMovement();
+        
+        HorizontalMovement();
+        VerticalMovement();
     }
 }
