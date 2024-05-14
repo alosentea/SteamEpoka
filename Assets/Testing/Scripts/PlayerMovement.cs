@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
-public class Movement : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
+    
     // Player Rigidbody2D Component //
-    public Rigidbody2D PlayerRigidbody2D;
+    public Rigidbody2D playerRigidbody2D;
 
     // "Walk" variables //
     public float walkThrust;
@@ -23,17 +25,23 @@ public class Movement : MonoBehaviour
     bool inAir = false;
 
     // "Fall through platform" variables //
-    public Collider2D PlayerCollider;
-    Collider2D PlatformCollider;
+    public Collider2D playerCollider;
+    Collider2D platformCollider2D;
     bool falling = false;
+    
+    // ALEJANDRO //
+    private Alejandro alejandro;
+    [SerializeField] private GameObject alosentea;
 
-    void Start()
+    void Awake()
     {
-        
+        // ALEJANDRO //
+        alejandro = alosentea.GetComponent<Alejandro>();
     }
 
     void Update()
     {
+        alejandro.playerCoords = playerRigidbody2D.position;
         
         RaycastHit2D JumpRay = Physics2D.Raycast(transform.position, -transform.up, raycastDistance, rayLayer);
         // Debug.DrawLine(transform.position, new Vector2(transform.position.x, transform.position.y - raycastDistance), Color.red);
@@ -47,8 +55,8 @@ public class Movement : MonoBehaviour
             if (Input.GetKey(KeyCode.A)) // "Left walk" key
             {
                 transform.localEulerAngles = new UnityEngine.Vector3(0, 180, 0);
-                walkForce = walkForce * (1 - (-PlayerRigidbody2D.velocity.x / maxVelocity));
-                PlayerRigidbody2D.AddForce(transform.right * walkForce, ForceMode2D.Force);
+                walkForce = walkForce * (1 - (-playerRigidbody2D.velocity.x / maxVelocity));
+                playerRigidbody2D.AddForce(transform.right * walkForce, ForceMode2D.Force);
             }
             
             walkForce = walkThrust * Time.deltaTime;
@@ -56,8 +64,8 @@ public class Movement : MonoBehaviour
             if (Input.GetKey(KeyCode.D)) // "Right walk" key
             {
                 transform.localEulerAngles = new UnityEngine.Vector3(0, 0, 0);
-                walkForce = walkForce * (1 - (PlayerRigidbody2D.velocity.x / maxVelocity));
-                PlayerRigidbody2D.AddForce(transform.right * walkForce, ForceMode2D.Force);
+                walkForce = walkForce * (1 - (playerRigidbody2D.velocity.x / maxVelocity));
+                playerRigidbody2D.AddForce(transform.right * walkForce, ForceMode2D.Force);
             }
             
             timeSinceDash += Time.deltaTime;
@@ -67,7 +75,7 @@ public class Movement : MonoBehaviour
                 if (timeSinceDash >= dashCooldown)
                 {
                     transform.localEulerAngles = new UnityEngine.Vector3(0, 180, 0);
-                    PlayerRigidbody2D.AddForce(transform.right * dashImpulse, ForceMode2D.Impulse);
+                    playerRigidbody2D.AddForce(transform.right * dashImpulse, ForceMode2D.Impulse);
                     timeSinceDash = 0;
                 }
             }
@@ -77,7 +85,7 @@ public class Movement : MonoBehaviour
                 if (timeSinceDash >= dashCooldown)
                 {
                     transform.localEulerAngles = new UnityEngine.Vector3(0, 0, 0);
-                    PlayerRigidbody2D.AddForce(transform.right * dashImpulse, ForceMode2D.Impulse);
+                    playerRigidbody2D.AddForce(transform.right * dashImpulse, ForceMode2D.Impulse);
                     timeSinceDash = 0;
                 }
             }
@@ -88,18 +96,18 @@ public class Movement : MonoBehaviour
             {
                 if (JumpRay.collider != null)
                 {
-                    if (PlayerRigidbody2D.velocity.y >= 0-jumpYVelocityError && PlayerRigidbody2D.velocity.y <= 0+jumpYVelocityError)
+                    if (playerRigidbody2D.velocity.y >= 0-jumpYVelocityError && playerRigidbody2D.velocity.y <= 0+jumpYVelocityError)
                     {
                         if (inAir == false)
                         {
                             // Vertical impulse //
-                            PlayerRigidbody2D.AddForce(transform.up * jumpImpulse, ForceMode2D.Impulse);
+                            playerRigidbody2D.AddForce(transform.up * jumpImpulse, ForceMode2D.Impulse);
                             inAir = true;
 
                             if (falling == true)
                             {
                                 // Platform collider reactivation //
-                                Physics2D.IgnoreCollision(PlayerCollider, PlatformCollider, false);
+                                Physics2D.IgnoreCollision(playerCollider, platformCollider2D, false);
                                 falling = false;
                             }
                         }
@@ -121,8 +129,8 @@ public class Movement : MonoBehaviour
                     if (falling == false)
                     {
                         // Platform collider deactivation //
-                        PlatformCollider = JumpRay.collider;
-                        Physics2D.IgnoreCollision(PlayerCollider, PlatformCollider, true);
+                        platformCollider2D = JumpRay.collider;
+                        Physics2D.IgnoreCollision(playerCollider, platformCollider2D, true);
                         falling = true;
                     }
                 }

@@ -146,7 +146,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 666276c306d7bf54cb7069e24a88bf67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayerRigidbody2D: {fileID: -9058177110110073701}
+  playerRigidbody2D: {fileID: -9058177110110073701}
   walkThrust: 1000
   maxVelocity: 5
   dashImpulse: 15
@@ -157,4 +157,5 @@ MonoBehaviour:
   rayLayer:
     serializedVersion: 2
     m_Bits: 3072
-  PlayerCollider: {fileID: -1923264265817008333}
+  playerCollider: {fileID: -1923264265817008333}
+  alosentea: {fileID: 855411258655464720, guid: 7504a6914893a194384f0302255afdac, type: 3}
