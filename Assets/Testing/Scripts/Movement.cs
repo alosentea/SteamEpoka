@@ -5,10 +5,15 @@ public class Movement : MonoBehaviour
     // Player Rigidbody2D Component //
     public Rigidbody2D PlayerRigidbody2D;
 
-    // "Walk" variables//
+    // "Walk" variables //
     public float walkThrust;
     float walkForce;
     public float maxVelocity;
+    
+    // "Dash" variables //
+    public float dashImpulse;
+    float timeSinceDash;
+    public float dashCooldown;
 
     // "Jump" variables //
     public float jumpImpulse;
@@ -30,28 +35,48 @@ public class Movement : MonoBehaviour
     void Update()
     {
         
-        walkForce = walkThrust * Time.deltaTime;
-        
         RaycastHit2D JumpRay = Physics2D.Raycast(transform.position, -transform.up, raycastDistance, rayLayer);
-        // Debugging //
         // Debug.DrawLine(transform.position, new Vector2(transform.position.x, transform.position.y - raycastDistance), Color.red);
 
         
         
         void HorizontalMovement()
         {
+            walkForce = walkThrust * Time.deltaTime;
+            
             if (Input.GetKey(KeyCode.A)) // "Left walk" key
             {
                 transform.localEulerAngles = new UnityEngine.Vector3(0, 180, 0);
                 walkForce = walkForce * (1 - (-PlayerRigidbody2D.velocity.x / maxVelocity));
                 PlayerRigidbody2D.AddForce(transform.right * walkForce, ForceMode2D.Force);
             }
+            
+            walkForce = walkThrust * Time.deltaTime;
                 
             if (Input.GetKey(KeyCode.D)) // "Right walk" key
             {
                 transform.localEulerAngles = new UnityEngine.Vector3(0, 0, 0);
                 walkForce = walkForce * (1 - (PlayerRigidbody2D.velocity.x / maxVelocity));
                 PlayerRigidbody2D.AddForce(transform.right * walkForce, ForceMode2D.Force);
+            }
+            
+            timeSinceDash += Time.deltaTime;
+
+            if (timeSinceDash >= dashCooldown)
+            {
+                if (Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.LeftShift)) // "Left dash" keys
+                {
+                    transform.localEulerAngles = new UnityEngine.Vector3(0, 180, 0);
+                    PlayerRigidbody2D.AddForce(transform.right * dashImpulse, ForceMode2D.Impulse);
+                    timeSinceDash = 0;
+                }
+                
+                if (Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.LeftShift)) // "Right dash" keys
+                {
+                    transform.localEulerAngles = new UnityEngine.Vector3(0, 0, 0);
+                    PlayerRigidbody2D.AddForce(transform.right * dashImpulse, ForceMode2D.Impulse);
+                    timeSinceDash = 0;
+                }
             }
         }
         void VerticalMovement()

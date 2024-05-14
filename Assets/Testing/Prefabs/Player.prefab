@@ -149,6 +149,8 @@ MonoBehaviour:
   PlayerRigidbody2D: {fileID: -9058177110110073701}
   walkThrust: 1000
   maxVelocity: 5
+  dashImpulse: 15
+  dashCooldown: 1.5
   jumpImpulse: 10
   raycastDistance: 0.33
   jumpYVelocityError: 0.05
