@@ -62,16 +62,19 @@ public class Movement : MonoBehaviour
             
             timeSinceDash += Time.deltaTime;
 
-            if (timeSinceDash >= dashCooldown)
+            if (Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.LeftShift)) // "Left dash" keys
             {
-                if (Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.LeftShift)) // "Left dash" keys
+                if (timeSinceDash >= dashCooldown)
                 {
                     transform.localEulerAngles = new UnityEngine.Vector3(0, 180, 0);
                     PlayerRigidbody2D.AddForce(transform.right * dashImpulse, ForceMode2D.Impulse);
                     timeSinceDash = 0;
                 }
-                
-                if (Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.LeftShift)) // "Right dash" keys
+            }
+
+            if (Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.LeftShift)) // "Right dash" keys
+            {
+                if (timeSinceDash >= dashCooldown)
                 {
                     transform.localEulerAngles = new UnityEngine.Vector3(0, 0, 0);
                     PlayerRigidbody2D.AddForce(transform.right * dashImpulse, ForceMode2D.Impulse);
