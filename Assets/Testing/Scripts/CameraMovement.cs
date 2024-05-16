@@ -18,22 +18,24 @@ public class CameraMovement : MonoBehaviour
     Vector3 playerCoords;
     float distance = 0;
     float velocity = 0;
-    public float pow = 2.0f;
-    public float div = 100.0f;
-    public float sum = 0.0f;
+    public float pow;
+    public float div;
+    public float sum;
+    public float mul;
 
-    void Update()
+    void FixedUpdate()
     {
-        void ArrowFollow()
+        void PlayerFollow()
         {
             playerCoords = new Vector3(singleton.playerCoords.x, singleton.playerCoords.y, -10.0f);
             
             distance = Vector3.Distance(transform.position, playerCoords);
             velocity = (Mathf.Pow(distance, pow) / div) + sum;
+            velocity = velocity * Time.fixedDeltaTime * mul;
 
             transform.position = Vector3.MoveTowards(transform.position, playerCoords, velocity);
         }
 
-        ArrowFollow();
+        PlayerFollow();
     }
 }
