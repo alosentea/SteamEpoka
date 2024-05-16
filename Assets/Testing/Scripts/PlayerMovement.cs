@@ -21,6 +21,10 @@ public class PlayerMovement : MonoBehaviour
     public float walkThrust;
     float walkForce;
     public float maxVelocity;
+    float stopImpulse;
+    int isItWalking;
+    bool isItWalkingLeft;
+    bool isItWalkingRight;
     
     // "Dash" variables //
     public float dashImpulse;
@@ -54,14 +58,32 @@ public class PlayerMovement : MonoBehaviour
         void HorizontalMovement()
         {
             walkForce = walkThrust * Time.deltaTime;
+
+            if (isItWalking == 0 )
+            {
+                stopImpulse = -playerRigidbody2D.velocity.x * playerRigidbody2D.mass;
+                if (stopImpulse < 0)
+                {
+                    playerRigidbody2D.AddForce(transform.right * stopImpulse, ForceMode2D.Impulse);
+                }
+                else
+                {
+                    playerRigidbody2D.AddForce(-transform.right * stopImpulse, ForceMode2D.Impulse);
+                }
+                isItWalking = 2;
+            }
             
             if (Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.S)) // "Left walk" key
             {
                 transform.localEulerAngles = new UnityEngine.Vector3(0, 180, 0);
                 walkForce = walkForce * (1 - (-playerRigidbody2D.velocity.x / maxVelocity));
                 playerRigidbody2D.AddForce(transform.right * walkForce, ForceMode2D.Force);
-
+                isItWalkingLeft = true;
                 playerState = "Walking";
+            }
+            else
+            {
+                isItWalkingLeft = false;
             }
             
             walkForce = walkThrust * Time.deltaTime;
@@ -71,8 +93,21 @@ public class PlayerMovement : MonoBehaviour
                 transform.localEulerAngles = new UnityEngine.Vector3(0, 0, 0);
                 walkForce = walkForce * (1 - (playerRigidbody2D.velocity.x / maxVelocity));
                 playerRigidbody2D.AddForce(transform.right * walkForce, ForceMode2D.Force);
-
+                isItWalkingRight = true;
                 playerState = "Walking";
+            }
+            else
+            {
+                isItWalkingRight = false;
+            }
+            
+            if(isItWalkingLeft == true || isItWalkingRight == true)
+            {
+                isItWalking = 1;
+            }
+            else
+            {
+                isItWalking = 0;
             }
             
             timeSinceDash += Time.deltaTime;
