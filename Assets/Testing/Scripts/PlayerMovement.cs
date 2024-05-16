@@ -28,20 +28,20 @@ public class PlayerMovement : MonoBehaviour
     public Collider2D playerCollider;
     Collider2D platformCollider2D;
     bool falling = false;
-    
-    // ALEJANDRO //
-    private Alejandro alejandro;
-    [SerializeField] private GameObject alosentea;
+
+    // SINGLETON //
+    private Singleton singleton;
+    [SerializeField] private GameObject singletonInstance;
 
     void Awake()
     {
-        // ALEJANDRO //
-        alejandro = alosentea.GetComponent<Alejandro>();
+        // SINGLETON //
+        singleton = singletonInstance.GetComponent<Singleton>();
     }
 
     void Update()
     {
-        alejandro.playerCoords = playerRigidbody2D.position;
+        singleton.playerCoords = playerRigidbody2D.position;
         
         RaycastHit2D JumpRay = Physics2D.Raycast(transform.position, -transform.up, raycastDistance, rayLayer);
         // Debug.DrawLine(transform.position, new Vector2(transform.position.x, transform.position.y - raycastDistance), Color.red);

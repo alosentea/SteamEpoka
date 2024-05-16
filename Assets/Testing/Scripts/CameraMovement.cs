@@ -11,21 +11,21 @@ public class CameraMovement : MonoBehaviour
     public float div = 100.0f;
     public float sum = 0.0f;
     
-    // ALEJANDRO //
-    private Alejandro alejandro;
-    [SerializeField] private GameObject alosentea;
+    // SINGLETON //
+    private Singleton singleton;
+    [SerializeField] private GameObject singletonInstance;
 
     void Awake()
     {
-        // ALEJANDRO //
-        alejandro = alosentea.GetComponent<Alejandro>();
+        // SINGLETON //
+        singleton = singletonInstance.GetComponent<Singleton>();
     }
 
     void Update()
     {
         void ArrowFollow()
         {
-            playerCoords = new Vector3(alejandro.playerCoords.x, alejandro.playerCoords.y, -10.0f);
+            playerCoords = new Vector3(singleton.playerCoords.x, singleton.playerCoords.y, -10.0f);
             
             distance = Vector3.Distance(transform.position, playerCoords);
             velocity = (Mathf.Pow(distance, pow) / div) + sum;

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8951920088447667139}
   - component: {fileID: -1300589907409348234}
   m_Layer: 0
-  m_Name: Alosentea
+  m_Name: SingletonInstance
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -44,3 +44,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5721d299f4c6301489dc6ca2bbef5d9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  singletonInstance: {fileID: 855411258655464720}
+  playerCoords: {x: -0.000000075244074, y: -3.4612648}

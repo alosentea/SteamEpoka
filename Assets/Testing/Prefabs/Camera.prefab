@@ -100,4 +100,4 @@ MonoBehaviour:
   pow: 2
   div: 100
   sum: 0
-  alosentea: {fileID: 855411258655464720, guid: 7504a6914893a194384f0302255afdac, type: 3}
+  singletonInstance: {fileID: 855411258655464720, guid: 7504a6914893a194384f0302255afdac, type: 3}
