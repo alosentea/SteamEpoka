@@ -4,13 +4,6 @@ using UnityEngine;
 
 public class CameraMovement : MonoBehaviour
 {
-    Vector3 playerCoords;
-    float distance = 0;
-    float velocity = 0;
-    public float pow = 2.0f;
-    public float div = 100.0f;
-    public float sum = 0.0f;
-    
     // SINGLETON //
     private Singleton singleton;
     [SerializeField] private GameObject singletonInstance;
@@ -20,6 +13,14 @@ public class CameraMovement : MonoBehaviour
         // SINGLETON //
         singleton = singletonInstance.GetComponent<Singleton>();
     }
+
+
+    Vector3 playerCoords;
+    float distance = 0;
+    float velocity = 0;
+    public float pow = 2.0f;
+    public float div = 100.0f;
+    public float sum = 0.0f;
 
     void Update()
     {
