@@ -61,7 +61,7 @@ public class PlayerMovement : MonoBehaviour
 
             if (isItWalking == 0 )
             {
-                if (animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_Dash") == false)
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_Dash") == false && animator.GetBool("Jumping") == false)
                 {
                     stopImpulse = -playerRigidbody2D.velocity.x * playerRigidbody2D.mass;
                     
@@ -83,7 +83,7 @@ public class PlayerMovement : MonoBehaviour
                 animator.SetBool("Dashing", false);
             }
             
-            if (Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.S)) // "Left walk" key
+            if (Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.S)) // "Left walk" keys
             {
                 transform.localEulerAngles = new UnityEngine.Vector3(0, 180, 0);
                 walkForce = walkForce * (1 - (-playerRigidbody2D.velocity.x / maxVelocity));
@@ -98,7 +98,7 @@ public class PlayerMovement : MonoBehaviour
             
             walkForce = walkThrust * Time.deltaTime;
                 
-            if (Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.S)) // "Right walk" key
+            if (Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.S)) // "Right walk" keys
             {
                 transform.localEulerAngles = new UnityEngine.Vector3(0, 0, 0);
                 walkForce = walkForce * (1 - (playerRigidbody2D.velocity.x / maxVelocity));
@@ -122,7 +122,7 @@ public class PlayerMovement : MonoBehaviour
             
             timeSinceDash += Time.deltaTime;
 
-            if (Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.LeftShift)) // "Left dash" keys
+            if (Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.S)) // "Left dash" keys
             {
                 if (timeSinceDash >= dashCooldown)
                 {
@@ -133,7 +133,7 @@ public class PlayerMovement : MonoBehaviour
                 }
             }
 
-            if (Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.LeftShift)) // "Right dash" keys
+            if (Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.S)) // "Right dash" keys
             {
                 if (timeSinceDash >= dashCooldown)
                 {
@@ -146,37 +146,57 @@ public class PlayerMovement : MonoBehaviour
         }
         void VerticalMovement()
         {
-            if (Input.GetKey(KeyCode.Space) && !Input.GetKey(KeyCode.S)) // "Jump" key
+            if (JumpRay.collider != null)
             {
-                if (JumpRay.collider != null)
+                if (playerRigidbody2D.velocity.y >= 0-jumpYVelocityError && playerRigidbody2D.velocity.y <= 0+jumpYVelocityError)
                 {
-                    if (playerRigidbody2D.velocity.y >= 0-jumpYVelocityError && playerRigidbody2D.velocity.y <= 0+jumpYVelocityError)
+                    if (inAir == false)
                     {
-                        if (inAir == false)
+                        if (Input.GetKey(KeyCode.Space) && !Input.GetKey(KeyCode.S)) // "Jump" keys
                         {
                             // Vertical impulse //
                             playerRigidbody2D.AddForce(transform.up * jumpImpulse, ForceMode2D.Impulse);
                             inAir = true;
-
-                            if (falling == true)
-                            {
-                                // Platform collider reactivation //
-                                Physics2D.IgnoreCollision(playerCollider, platformCollider2D, false);
-                                falling = false;
-                            }
+                            animator.SetBool("Jumping", true);
+                            animator.SetBool("Landed", false);
+                        }
+                        else
+                        {
+                            animator.SetBool("Landed", true);
+                            animator.SetBool("Jumping", false);
+                            animator.SetBool("Cayendo", false);
+                        }
+                        
+                        if (falling == true)
+                        {
+                            // Platform collider reactivation //
+                            Physics2D.IgnoreCollision(playerCollider, platformCollider2D, false);
+                            falling = false;
                         }
                     }
                 }
-                else
+            }
+            else
+            {
+                if(inAir == true)
                 {
-                    if(inAir == true)
-                    {
-                        inAir = false;
-                    }
+                    inAir = false;
+                }
+            }
+            
+            if (Input.GetKey(KeyCode.S) && (animator.GetBool("Cayendo") == false)) // "Squat" key
+            {
+                animator.SetBool("Agachado", true);
+            }
+            else
+            {
+                if (animator.GetBool("Cayendo") == false)
+                {
+                    animator.SetBool("Agachado", false);
                 }
             }
 
-            if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.Space)) // "Fall through platform" key
+            if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.Space) && (animator.GetBool("Cayendo") == false)) // "Fall through platform" keys
             {
                 if (JumpRay.collider != null)
                 {
@@ -186,6 +206,8 @@ public class PlayerMovement : MonoBehaviour
                         platformCollider2D = JumpRay.collider;
                         Physics2D.IgnoreCollision(playerCollider, platformCollider2D, true);
                         falling = true;
+                        animator.SetBool("Agachado", true);
+                        animator.SetBool("Cayendo", true);
                     }
                 }
             }
