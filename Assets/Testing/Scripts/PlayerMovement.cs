@@ -16,6 +16,9 @@ public class PlayerMovement : MonoBehaviour
 
     // Player Rigidbody2D Component //
     public Rigidbody2D playerRigidbody2D;
+    
+    // Player Animator Component //
+    public Animator animator;
 
     // "Walk" variables //
     public float walkThrust;
@@ -43,16 +46,13 @@ public class PlayerMovement : MonoBehaviour
     Collider2D platformCollider2D;
     bool falling = false;
 
-    // Player state variable //
-    string playerState;
-
     void Update()
     {
         singleton.playerCoords = playerRigidbody2D.position;
         
         RaycastHit2D JumpRay = Physics2D.Raycast(transform.position, -transform.up, raycastDistance, rayLayer);
         // Debug.DrawLine(transform.position, new Vector2(transform.position.x, transform.position.y - raycastDistance), Color.red);
-
+        
         
         
         void HorizontalMovement()
@@ -61,16 +61,26 @@ public class PlayerMovement : MonoBehaviour
 
             if (isItWalking == 0 )
             {
-                stopImpulse = -playerRigidbody2D.velocity.x * playerRigidbody2D.mass;
-                if (stopImpulse < 0)
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_Dash") == false)
                 {
-                    playerRigidbody2D.AddForce(transform.right * stopImpulse, ForceMode2D.Impulse);
+                    stopImpulse = -playerRigidbody2D.velocity.x * playerRigidbody2D.mass;
+                    
+                    if (stopImpulse < 0)
+                    {
+                        playerRigidbody2D.AddForce(transform.right * stopImpulse, ForceMode2D.Impulse);
+                    }
+                    if (stopImpulse > 0)
+                    {
+                        playerRigidbody2D.AddForce(-transform.right * stopImpulse, ForceMode2D.Impulse);
+                    }
                 }
-                else
-                {
-                    playerRigidbody2D.AddForce(-transform.right * stopImpulse, ForceMode2D.Impulse);
-                }
+                animator.SetBool("Walking", false);
                 isItWalking = 2;
+            }
+
+            if (animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_Dash") == true)
+            {
+                animator.SetBool("Dashing", false);
             }
             
             if (Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.S)) // "Left walk" key
@@ -79,7 +89,7 @@ public class PlayerMovement : MonoBehaviour
                 walkForce = walkForce * (1 - (-playerRigidbody2D.velocity.x / maxVelocity));
                 playerRigidbody2D.AddForce(transform.right * walkForce, ForceMode2D.Force);
                 isItWalkingLeft = true;
-                playerState = "Walking";
+                animator.SetBool("Walking", true);
             }
             else
             {
@@ -94,7 +104,7 @@ public class PlayerMovement : MonoBehaviour
                 walkForce = walkForce * (1 - (playerRigidbody2D.velocity.x / maxVelocity));
                 playerRigidbody2D.AddForce(transform.right * walkForce, ForceMode2D.Force);
                 isItWalkingRight = true;
-                playerState = "Walking";
+                animator.SetBool("Walking", true);
             }
             else
             {
@@ -119,8 +129,7 @@ public class PlayerMovement : MonoBehaviour
                     transform.localEulerAngles = new UnityEngine.Vector3(0, 180, 0);
                     playerRigidbody2D.AddForce(transform.right * dashImpulse, ForceMode2D.Impulse);
                     timeSinceDash = 0;
-
-                    playerState = "Dashing";
+                    animator.SetBool("Dashing", true);
                 }
             }
 
@@ -131,8 +140,7 @@ public class PlayerMovement : MonoBehaviour
                     transform.localEulerAngles = new UnityEngine.Vector3(0, 0, 0);
                     playerRigidbody2D.AddForce(transform.right * dashImpulse, ForceMode2D.Impulse);
                     timeSinceDash = 0;
-
-                    playerState = "Dashing";
+                    animator.SetBool("Dashing", true);
                 }
             }
         }
@@ -180,8 +188,6 @@ public class PlayerMovement : MonoBehaviour
                         falling = true;
                     }
                 }
-
-                playerState = "Squat";
             }
         }
         

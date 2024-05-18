@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8234972034627865568}
   - component: {fileID: 6932804711544516850}
+  - component: {fileID: -4201210707829912724}
   - component: {fileID: -9058177110110073701}
   - component: {fileID: -1923264265817008333}
   - component: {fileID: -662643064219107203}
@@ -76,17 +77,37 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 59c6b77e2a661ef49ab5c2dc41dc89b0, type: 3}
+  m_Sprite: {fileID: -5109932653240421202, guid: b8b65ab87fa0b1349bbcbe432d428886, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.64, y: 0.64}
+  m_Size: {x: 0.9, y: 0.64}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!95 &-4201210707829912724
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 551022108505801903}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 143a11b368efb6445a4ef82db8857b16, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
 --- !u!50 &-9058177110110073701
 Rigidbody2D:
   serializedVersion: 4
@@ -125,8 +146,8 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.64, y: 0.64}
-    newSize: {x: 0.64, y: 0.64}
+    oldSize: {x: 0.9, y: 0.64}
+    newSize: {x: 0.9, y: 0.64}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
@@ -146,7 +167,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 666276c306d7bf54cb7069e24a88bf67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  singletonInstance: {fileID: 855411258655464720, guid: 7504a6914893a194384f0302255afdac, type: 3}
   playerRigidbody2D: {fileID: -9058177110110073701}
+  animator: {fileID: -4201210707829912724}
   walkThrust: 1000
   maxVelocity: 5
   dashImpulse: 15
@@ -158,4 +181,3 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 3072
   playerCollider: {fileID: -1923264265817008333}
-  singletonInstance: {fileID: 855411258655464720, guid: 7504a6914893a194384f0302255afdac, type: 3}

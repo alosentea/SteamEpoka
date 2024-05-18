@@ -130,6 +130,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -4119458460117463789, guid: 65d6764d19f106143823377ff68a80c2, type: 3}
+      propertyPath: mul
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 9206230444676934637, guid: 65d6764d19f106143823377ff68a80c2, type: 3}
       propertyPath: m_Name
       value: Camera
@@ -252,6 +256,14 @@ PrefabInstance:
       propertyPath: m_CollisionDetection
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -1923264265817008333, guid: 048ef3e7774ac5d4cbef1bd8d5a64cee, type: 3}
+      propertyPath: m_Size.x
+      value: 0.42
+      objectReference: {fileID: 0}
+    - target: {fileID: -1923264265817008333, guid: 048ef3e7774ac5d4cbef1bd8d5a64cee, type: 3}
+      propertyPath: m_Offset.x
+      value: -0.13
+      objectReference: {fileID: 0}
     - target: {fileID: -662643064219107203, guid: 048ef3e7774ac5d4cbef1bd8d5a64cee, type: 3}
       propertyPath: walkThrust
       value: 2000
@@ -274,7 +286,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8234972034627865568, guid: 048ef3e7774ac5d4cbef1bd8d5a64cee, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 8234972034627865568, guid: 048ef3e7774ac5d4cbef1bd8d5a64cee, type: 3}
       propertyPath: m_LocalPosition.y
