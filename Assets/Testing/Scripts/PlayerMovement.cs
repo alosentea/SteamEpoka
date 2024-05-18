@@ -48,6 +48,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        
         singleton.playerCoords = playerRigidbody2D.position;
         
         RaycastHit2D JumpRay = Physics2D.Raycast(transform.position, -transform.up, raycastDistance, rayLayer);
@@ -61,7 +62,7 @@ public class PlayerMovement : MonoBehaviour
 
             if (isItWalking == 0 )
             {
-                if (animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_Dash") == false && animator.GetBool("Jumping") == false)
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_Dash") == false && animator.GetBool("Jumping") == false && animator.GetBool("Falling") == false)
                 {
                     stopImpulse = -playerRigidbody2D.velocity.x * playerRigidbody2D.mass;
                     
@@ -83,7 +84,7 @@ public class PlayerMovement : MonoBehaviour
                 animator.SetBool("Dashing", false);
             }
             
-            if (Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.S)) // "Left walk" keys
+            if (Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.S)) // "Left walk" keys
             {
                 transform.localEulerAngles = new UnityEngine.Vector3(0, 180, 0);
                 walkForce = walkForce * (1 - (-playerRigidbody2D.velocity.x / maxVelocity));
@@ -98,7 +99,7 @@ public class PlayerMovement : MonoBehaviour
             
             walkForce = walkThrust * Time.deltaTime;
                 
-            if (Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.S)) // "Right walk" keys
+            if (Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.S)) // "Right walk" keys
             {
                 transform.localEulerAngles = new UnityEngine.Vector3(0, 0, 0);
                 walkForce = walkForce * (1 - (playerRigidbody2D.velocity.x / maxVelocity));
@@ -122,7 +123,7 @@ public class PlayerMovement : MonoBehaviour
             
             timeSinceDash += Time.deltaTime;
 
-            if (Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.S)) // "Left dash" keys
+            if (Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.S)) // "Left dash" keys
             {
                 if (timeSinceDash >= dashCooldown)
                 {
@@ -133,7 +134,7 @@ public class PlayerMovement : MonoBehaviour
                 }
             }
 
-            if (Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.S)) // "Right dash" keys
+            if (Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.S)) // "Right dash" keys
             {
                 if (timeSinceDash >= dashCooldown)
                 {
@@ -175,12 +176,18 @@ public class PlayerMovement : MonoBehaviour
                         }
                     }
                 }
+                animator.SetBool("Falling", false);
             }
             else
             {
                 if(inAir == true)
                 {
                     inAir = false;
+                }
+                
+                if (animator.GetBool("Jumping") == false && animator.GetBool("Landed") == true && animator.GetBool("Agachado") == false && animator.GetBool("Cayendo") == false)
+                {
+                    animator.SetBool("Falling", true);
                 }
             }
             
