@@ -4,16 +4,9 @@ using UnityEngine.Serialization;
 public class PlayerMovement : MonoBehaviour
 {
     // SINGLETON //
-    private Singleton singleton;
+    private Singleton _singleton;
     [SerializeField] private GameObject singletonInstance;
-
-    void Awake()
-    {
-        // SINGLETON //
-        singleton = singletonInstance.GetComponent<Singleton>();
-    }
-
-
+    
     // Player Rigidbody2D Component //
     public Rigidbody2D playerRigidbody2D;
     
@@ -22,273 +15,329 @@ public class PlayerMovement : MonoBehaviour
 
     // "Walk" variables //
     public float walkThrust;
-    float walkForce;
+    private float _walkForce;
     public float maxVelocity;
-    float stopImpulse;
-    int isItWalking;
-    bool isItWalkingLeft;
-    bool isItWalkingRight;
+    private float _stopImpulse;
+    private int _isItWalking;
+    private bool _isItWalkingLeft;
+    private bool _isItWalkingRight;
     
     // "Dash" variables //
     public float dashImpulse;
-    float timeSinceDash;
+    private float _timeSinceDash;
     public float dashCooldown;
 
     // "Jump" variables //
     public float jumpImpulse;
     public float jumpThrust;
-    float jumpForce;
-    float timeAfterJump;
-    float timeFalling;
-    float cancelFallingVelocityImpulse;
+    private float _jumpForce;
+    private float _timeAfterJump;
+    private float _timeFalling;
+    private float _cancelFallingVelocityImpulse;
     public float coyoteTime;
     public float maxTimeAfterJump;
     public float raycastDistance;
     public float jumpYVelocityError;
     public LayerMask rayLayer;
-    bool inAir = false;
-    bool jumpKeysHolded;
+    private bool _inAir = false;
+    private bool _jumpKeysHolded;
 
     // "Fall through platform" variables //
     public Collider2D playerCollider;
-    Collider2D platformCollider2D;
-    bool falling = false;
+    Collider2D _platformCollider2D;
+    private bool _droppingFromPlatform = false;
+    
+    // Player state machine variables //
+    private bool _stateMachineWalking;
+    private bool _stateMachineDashing;
+    private bool _stateMachineJumping;
+    private bool _stateMachineLanded;
+    private bool _stateMachineSquatting;
+    private bool _stateMachineDropping;
+    private bool _stateMachineFalling;
+
+    void Awake()
+    {
+        _singleton = singletonInstance.GetComponent<Singleton>();
+    }
 
     void Update()
     {
+        _singleton.playerCoords = playerRigidbody2D.position;
         
-        singleton.playerCoords = playerRigidbody2D.position;
-        
-        RaycastHit2D JumpRay = Physics2D.Raycast(transform.position, -transform.up, raycastDistance, rayLayer);
-        // Debug.DrawLine(transform.position, new Vector2(transform.position.x, transform.position.y - raycastDistance), Color.red);
-        
-        
-        
-        void HorizontalMovement()
+        HorizontalMovement();
+        VerticalMovement();
+    }
+    
+    void HorizontalMovement()
         {
-            walkForce = walkThrust * Time.deltaTime;
+            _walkForce = walkThrust * Time.deltaTime;
 
-            if (isItWalking == 0 )
+            if (_isItWalking == 0 )
             {
-                if (animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_Dash") == false && animator.GetBool("Jumping") == false && animator.GetBool("Falling") == false)
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_Dash") == false && _stateMachineJumping == false && _stateMachineFalling == false)
                 {
-                    stopImpulse = -playerRigidbody2D.velocity.x * playerRigidbody2D.mass;
-                    
-                    if (stopImpulse < 0)
-                    {
-                        playerRigidbody2D.AddForce(transform.right * stopImpulse, ForceMode2D.Impulse);
-                    }
-                    if (stopImpulse > 0)
-                    {
-                        playerRigidbody2D.AddForce(-transform.right * stopImpulse, ForceMode2D.Impulse);
-                    }
+                    CancelWalkingVelocity();
                 }
                 animator.SetBool("Walking", false);
-                isItWalking = 2;
+                _stateMachineWalking = false;
+                
+                _isItWalking = 2;
             }
 
             if (animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_Dash") == true)
             {
                 animator.SetBool("Dashing", false);
+                _stateMachineDashing = false;
             }
             
             if (Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.S)) // "Left walk" keys
             {
-                transform.localEulerAngles = new UnityEngine.Vector3(0, 180, 0);
-                walkForce = walkForce * (1 - (-playerRigidbody2D.velocity.x / maxVelocity));
-                playerRigidbody2D.AddForce(transform.right * walkForce, ForceMode2D.Force);
-                isItWalkingLeft = true;
+                ApplyLeftWalkingForce();
+                _isItWalkingLeft = true;
                 animator.SetBool("Walking", true);
+                _stateMachineWalking = true;
             }
             else
             {
-                isItWalkingLeft = false;
+                _isItWalkingLeft = false;
             }
             
-            walkForce = walkThrust * Time.deltaTime;
+            _walkForce = walkThrust * Time.deltaTime;
                 
             if (Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.S)) // "Right walk" keys
             {
-                transform.localEulerAngles = new UnityEngine.Vector3(0, 0, 0);
-                walkForce = walkForce * (1 - (playerRigidbody2D.velocity.x / maxVelocity));
-                playerRigidbody2D.AddForce(transform.right * walkForce, ForceMode2D.Force);
-                isItWalkingRight = true;
+                ApplyRightWalkingForce();
+                _isItWalkingRight = true;
                 animator.SetBool("Walking", true);
+                _stateMachineWalking = true;
             }
             else
             {
-                isItWalkingRight = false;
+                _isItWalkingRight = false;
             }
             
-            if(isItWalkingLeft == true || isItWalkingRight == true)
+            if(_isItWalkingLeft == true || _isItWalkingRight == true)
             {
-                isItWalking = 1;
+                _isItWalking = 1;
             }
             else
             {
-                isItWalking = 0;
+                _isItWalking = 0;
             }
             
-            timeSinceDash += Time.deltaTime;
+            _timeSinceDash += Time.deltaTime;
 
             if (Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.S)) // "Left dash" keys
             {
-                if (timeSinceDash >= dashCooldown)
+                if (_timeSinceDash >= dashCooldown)
                 {
-                    transform.localEulerAngles = new UnityEngine.Vector3(0, 180, 0);
-                    playerRigidbody2D.AddForce(transform.right * dashImpulse, ForceMode2D.Impulse);
-                    timeSinceDash = 0;
+                    ApplyLeftDashingImpulse();
+                    _timeSinceDash = 0;
                     animator.SetBool("Dashing", true);
+                    _stateMachineDashing = true;
                 }
             }
 
             if (Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.S)) // "Right dash" keys
             {
-                if (timeSinceDash >= dashCooldown)
+                if (_timeSinceDash >= dashCooldown)
                 {
-                    transform.localEulerAngles = new UnityEngine.Vector3(0, 0, 0);
-                    playerRigidbody2D.AddForce(transform.right * dashImpulse, ForceMode2D.Impulse);
-                    timeSinceDash = 0;
+                    ApplyRightDashingImpulse();
+                    _timeSinceDash = 0;
                     animator.SetBool("Dashing", true);
+                    _stateMachineDashing = true;
                 }
             }
         }
-        void VerticalMovement()
+    
+    private void ApplyRightDashingImpulse()
+    {
+        transform.localEulerAngles = new UnityEngine.Vector3(0, 0, 0);
+        playerRigidbody2D.AddForce(transform.right * dashImpulse, ForceMode2D.Impulse);
+    }
+    private void ApplyLeftDashingImpulse()
+    {
+        transform.localEulerAngles = new UnityEngine.Vector3(0, 180, 0);
+        playerRigidbody2D.AddForce(transform.right * dashImpulse, ForceMode2D.Impulse);
+    }
+    private void ApplyRightWalkingForce()
+    {
+        transform.localEulerAngles = new UnityEngine.Vector3(0, 0, 0);
+        _walkForce = _walkForce * (1 - (playerRigidbody2D.velocity.x / maxVelocity));
+        playerRigidbody2D.AddForce(transform.right * _walkForce, ForceMode2D.Force);
+    }
+    private void ApplyLeftWalkingForce()
+    {
+        transform.localEulerAngles = new UnityEngine.Vector3(0, 180, 0);
+        _walkForce = _walkForce * (1 - (-playerRigidbody2D.velocity.x / maxVelocity));
+        playerRigidbody2D.AddForce(transform.right * _walkForce, ForceMode2D.Force);
+    }
+    private void CancelWalkingVelocity()
+    {
+        _stopImpulse = -playerRigidbody2D.velocity.x * playerRigidbody2D.mass;
+                    
+        if (_stopImpulse < 0)
         {
-            if (JumpRay.collider != null)
+            playerRigidbody2D.AddForce(transform.right * _stopImpulse, ForceMode2D.Impulse);
+        }
+        if (_stopImpulse > 0)
+        {
+            playerRigidbody2D.AddForce(-transform.right * _stopImpulse, ForceMode2D.Impulse);
+        }
+    }
+    
+    void VerticalMovement()
+        {
+            RaycastHit2D jumpRay = Physics2D.Raycast(transform.position, -transform.up, raycastDistance, rayLayer);
+            // Debug.DrawLine(transform.position, new Vector2(transform.position.x, transform.position.y - raycastDistance), Color.red);
+            
+            if (jumpRay.collider != null)
             {
                 if (playerRigidbody2D.velocity.y >= 0-jumpYVelocityError && playerRigidbody2D.velocity.y <= 0+jumpYVelocityError)
                 {
-                    if (inAir == false)
+                    if (_inAir == false)
                     {
                         if (Input.GetKey(KeyCode.Space) && !Input.GetKey(KeyCode.S)) // "Jump" keys
                         {
-                            if (jumpKeysHolded == false)
+                            if (_jumpKeysHolded == false)
                             {
                                 // Vertical impulse //
                                 playerRigidbody2D.AddForce(transform.up * jumpImpulse, ForceMode2D.Impulse);
-                                inAir = true;
-                                timeAfterJump = 0;
-                                jumpKeysHolded = true;
+                                _inAir = true;
+                                _timeAfterJump = 0;
+                                _jumpKeysHolded = true;
                             
                                 animator.SetBool("Jumping", true);
+                                _stateMachineJumping = true;
                                 animator.SetBool("Landed", false);
+                                _stateMachineLanded = false;
                             }
                             else
                             {
                                 animator.SetBool("Landed", true);
+                                _stateMachineLanded = true;
                                 animator.SetBool("Jumping", false);
-                                animator.SetBool("Cayendo", false);
+                                _stateMachineJumping = false;
+                                animator.SetBool("Dropping", false);
+                                _stateMachineDropping = false;
                             }
                         }
                         else
                         {
                             animator.SetBool("Landed", true);
+                            _stateMachineLanded = true;
                             animator.SetBool("Jumping", false);
-                            animator.SetBool("Cayendo", false);
-                            jumpKeysHolded = false;
+                            _stateMachineJumping = false;
+                            animator.SetBool("Dropping", false);
+                            _stateMachineDropping = false;
+                            
+                            _jumpKeysHolded = false;
                         }
                         
-                        if (falling == true)
+                        if (_droppingFromPlatform == true)
                         {
                             // Platform collider reactivation //
-                            Physics2D.IgnoreCollision(playerCollider, platformCollider2D, false);
-                            falling = false;
+                            Physics2D.IgnoreCollision(playerCollider, _platformCollider2D, false);
+                            _droppingFromPlatform = false;
                         }
                     }
                 }
                 animator.SetBool("Falling", false);
+                _stateMachineFalling = false;
             }
             else
             {
-                if(inAir == true)
+                if(_inAir == true)
                 {
-                    inAir = false;
+                    _inAir = false;
                 }
                 
-                if (animator.GetBool("Jumping") == false && animator.GetBool("Landed") == true && animator.GetBool("Agachado") == false && animator.GetBool("Cayendo") == false && animator.GetBool("Falling") == false)
+                if (_stateMachineJumping == false && _stateMachineLanded == true && _stateMachineSquatting == false && _stateMachineDropping == false && _stateMachineFalling == false)
                 {
                     animator.SetBool("Falling", true);
-                    timeFalling = 0;
+                    _stateMachineFalling = true;
+                    
+                    _timeFalling = 0;
                 }
             }
 
-            if (animator.GetBool("Falling") == true)
+            if (_stateMachineFalling == true)
             {
-                if (timeFalling <= coyoteTime)
+                if (_timeFalling <= coyoteTime)
                 {
                     if (Input.GetKey(KeyCode.Space) && !Input.GetKey(KeyCode.S)) // "Jump" keys
                     {
-                        if (jumpKeysHolded == false)
+                        if (_jumpKeysHolded == false)
                         {
                             // Cancel falling velocity //
-                            cancelFallingVelocityImpulse = -playerRigidbody2D.velocity.y * playerRigidbody2D.mass;
-                            playerRigidbody2D.AddForce(transform.up * cancelFallingVelocityImpulse, ForceMode2D.Impulse);
+                            _cancelFallingVelocityImpulse = -playerRigidbody2D.velocity.y * playerRigidbody2D.mass;
+                            playerRigidbody2D.AddForce(transform.up * _cancelFallingVelocityImpulse, ForceMode2D.Impulse);
                             
                             // Vertical impulse //
                             playerRigidbody2D.AddForce(transform.up * jumpImpulse, ForceMode2D.Impulse);
-                            inAir = true;
-                            timeAfterJump = 0;
-                            jumpKeysHolded = true;
+                            _inAir = true;
+                            _timeAfterJump = 0;
+                            _jumpKeysHolded = true;
                             
                             animator.SetBool("Jumping", true);
+                            _stateMachineJumping = true;
                             animator.SetBool("Landed", false);
+                            _stateMachineLanded = false;
                         }
                     }
                 }
             }
-            
-            Debug.Log(timeFalling);
 
-            timeFalling += Time.deltaTime;
+            _timeFalling += Time.deltaTime;
 
-            if (animator.GetBool("Jumping") == true)
+            if (_stateMachineJumping == true)
             {
                 if (Input.GetKey(KeyCode.Space) && !Input.GetKey(KeyCode.S)) // "Jump" keys
                 {
-                    if (timeAfterJump < maxTimeAfterJump)
+                    if (_timeAfterJump < maxTimeAfterJump)
                     {
-                        jumpForce = jumpThrust * Time.deltaTime;
-                        jumpForce = jumpForce * (1 - (timeAfterJump / maxTimeAfterJump));
+                        _jumpForce = jumpThrust * Time.deltaTime;
+                        _jumpForce = _jumpForce * (1 - (_timeAfterJump / maxTimeAfterJump));
                     
                         // Vertical force //
-                        playerRigidbody2D.AddForce(transform.up * jumpForce, ForceMode2D.Force);
+                        playerRigidbody2D.AddForce(transform.up * _jumpForce, ForceMode2D.Force);
                     }
                 }
                 
-                timeAfterJump += Time.deltaTime;
+                _timeAfterJump += Time.deltaTime;
             }
             
-            if (Input.GetKey(KeyCode.S) && (animator.GetBool("Cayendo") == false)) // "Squat" key
+            if (Input.GetKey(KeyCode.S) && _stateMachineDropping == false) // "Squat" key
             {
-                animator.SetBool("Agachado", true);
+                animator.SetBool("Squatting", true);
+                _stateMachineSquatting = true;
             }
             else
             {
-                if (animator.GetBool("Cayendo") == false)
+                if (_stateMachineDropping == false)
                 {
-                    animator.SetBool("Agachado", false);
+                    animator.SetBool("Squatting", false);
+                    _stateMachineSquatting = false;
                 }
             }
 
-            if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.Space) && (animator.GetBool("Cayendo") == false)) // "Fall through platform" keys
+            if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.Space) && _stateMachineDropping == false) // "Fall through platform" keys
             {
-                if (JumpRay.collider != null)
+                if (jumpRay.collider != null)
                 {
-                    if (falling == false)
+                    if (_droppingFromPlatform == false)
                     {
                         // Platform collider deactivation //
-                        platformCollider2D = JumpRay.collider;
-                        Physics2D.IgnoreCollision(playerCollider, platformCollider2D, true);
-                        falling = true;
-                        animator.SetBool("Agachado", true);
-                        animator.SetBool("Cayendo", true);
+                        _platformCollider2D = jumpRay.collider;
+                        Physics2D.IgnoreCollision(playerCollider, _platformCollider2D, true);
+                        _droppingFromPlatform = true;
+                        animator.SetBool("Squatting", true);
+                        _stateMachineSquatting = true;
+                        animator.SetBool("Dropping", true);
+                        _stateMachineDropping = false;
                     }
                 }
             }
         }
-        
-        HorizontalMovement();
-        VerticalMovement();
-    }
 }

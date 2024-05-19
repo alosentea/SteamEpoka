@@ -71,7 +71,7 @@ AnimatorStateTransition:
     m_ConditionEvent: Walking
     m_EventTreshold: 0
   - m_ConditionMode: 2
-    m_ConditionEvent: Cayendo
+    m_ConditionEvent: Dropping
     m_EventTreshold: 0
   - m_ConditionMode: 2
     m_ConditionEvent: Falling
@@ -214,7 +214,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: Cayendo
+    m_ConditionEvent: Dropping
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 7735251504511795549}
@@ -346,7 +346,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: Agachado
+    m_ConditionEvent: Squatting
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -2731214896141006467}
@@ -402,7 +402,7 @@ AnimatorStateTransition:
     m_ConditionEvent: Walking
     m_EventTreshold: 0
   - m_ConditionMode: 2
-    m_ConditionEvent: Cayendo
+    m_ConditionEvent: Dropping
     m_EventTreshold: 0
   - m_ConditionMode: 2
     m_ConditionEvent: Falling
@@ -479,13 +479,13 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 0}
-  - m_Name: Agachado
+  - m_Name: Squatting
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 0}
-  - m_Name: Cayendo
+  - m_Name: Dropping
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -727,7 +727,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 2
-    m_ConditionEvent: Agachado
+    m_ConditionEvent: Squatting
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 8932090291084050932}
