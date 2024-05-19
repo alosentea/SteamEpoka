@@ -36,6 +36,10 @@ public class PlayerMovement : MonoBehaviour
 
     // "Jump" variables //
     public float jumpImpulse;
+    public float jumpThrust;
+    float jumpForce;
+    float timeAfterJump;
+    public float maxTimeAfterJump;
     public float raycastDistance;
     public float jumpYVelocityError;
     public LayerMask rayLayer;
@@ -158,6 +162,8 @@ public class PlayerMovement : MonoBehaviour
                             // Vertical impulse //
                             playerRigidbody2D.AddForce(transform.up * jumpImpulse, ForceMode2D.Impulse);
                             inAir = true;
+                            timeAfterJump = 0;
+                            
                             animator.SetBool("Jumping", true);
                             animator.SetBool("Landed", false);
                         }
@@ -189,6 +195,23 @@ public class PlayerMovement : MonoBehaviour
                 {
                     animator.SetBool("Falling", true);
                 }
+            }
+
+            if (animator.GetBool("Jumping") == true)
+            {
+                if (Input.GetKey(KeyCode.Space) && !Input.GetKey(KeyCode.S)) // "Jump" keys
+                {
+                    if (timeAfterJump < maxTimeAfterJump)
+                    {
+                        jumpForce = jumpThrust * Time.deltaTime;
+                        jumpForce = jumpForce * (1 - (timeAfterJump / maxTimeAfterJump));
+                    
+                        // Vertical force //
+                        playerRigidbody2D.AddForce(transform.up * jumpForce, ForceMode2D.Force);
+                    }
+                }
+                
+                timeAfterJump += Time.deltaTime;
             }
             
             if (Input.GetKey(KeyCode.S) && (animator.GetBool("Cayendo") == false)) // "Squat" key
