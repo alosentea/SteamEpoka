@@ -176,6 +176,7 @@ MonoBehaviour:
   dashCooldown: 1.5
   jumpImpulse: 11
   jumpThrust: 1000
+  coyoteTime: 0.1
   maxTimeAfterJump: 2
   raycastDistance: 0.33
   jumpYVelocityError: 0.05

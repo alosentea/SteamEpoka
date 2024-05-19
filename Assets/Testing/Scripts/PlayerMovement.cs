@@ -39,6 +39,9 @@ public class PlayerMovement : MonoBehaviour
     public float jumpThrust;
     float jumpForce;
     float timeAfterJump;
+    float timeFalling;
+    float cancelFallingVelocityImpulse;
+    public float coyoteTime;
     public float maxTimeAfterJump;
     public float raycastDistance;
     public float jumpYVelocityError;
@@ -203,11 +206,41 @@ public class PlayerMovement : MonoBehaviour
                     inAir = false;
                 }
                 
-                if (animator.GetBool("Jumping") == false && animator.GetBool("Landed") == true && animator.GetBool("Agachado") == false && animator.GetBool("Cayendo") == false)
+                if (animator.GetBool("Jumping") == false && animator.GetBool("Landed") == true && animator.GetBool("Agachado") == false && animator.GetBool("Cayendo") == false && animator.GetBool("Falling") == false)
                 {
                     animator.SetBool("Falling", true);
+                    timeFalling = 0;
                 }
             }
+
+            if (animator.GetBool("Falling") == true)
+            {
+                if (timeFalling <= coyoteTime)
+                {
+                    if (Input.GetKey(KeyCode.Space) && !Input.GetKey(KeyCode.S)) // "Jump" keys
+                    {
+                        if (jumpKeysHolded == false)
+                        {
+                            // Cancel falling velocity //
+                            cancelFallingVelocityImpulse = -playerRigidbody2D.velocity.y * playerRigidbody2D.mass;
+                            playerRigidbody2D.AddForce(transform.up * cancelFallingVelocityImpulse, ForceMode2D.Impulse);
+                            
+                            // Vertical impulse //
+                            playerRigidbody2D.AddForce(transform.up * jumpImpulse, ForceMode2D.Impulse);
+                            inAir = true;
+                            timeAfterJump = 0;
+                            jumpKeysHolded = true;
+                            
+                            animator.SetBool("Jumping", true);
+                            animator.SetBool("Landed", false);
+                        }
+                    }
+                }
+            }
+            
+            Debug.Log(timeFalling);
+
+            timeFalling += Time.deltaTime;
 
             if (animator.GetBool("Jumping") == true)
             {
