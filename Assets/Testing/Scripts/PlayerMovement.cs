@@ -44,6 +44,7 @@ public class PlayerMovement : MonoBehaviour
     public float jumpYVelocityError;
     public LayerMask rayLayer;
     bool inAir = false;
+    bool jumpKeysHolded;
 
     // "Fall through platform" variables //
     public Collider2D playerCollider;
@@ -159,19 +160,30 @@ public class PlayerMovement : MonoBehaviour
                     {
                         if (Input.GetKey(KeyCode.Space) && !Input.GetKey(KeyCode.S)) // "Jump" keys
                         {
-                            // Vertical impulse //
-                            playerRigidbody2D.AddForce(transform.up * jumpImpulse, ForceMode2D.Impulse);
-                            inAir = true;
-                            timeAfterJump = 0;
+                            if (jumpKeysHolded == false)
+                            {
+                                // Vertical impulse //
+                                playerRigidbody2D.AddForce(transform.up * jumpImpulse, ForceMode2D.Impulse);
+                                inAir = true;
+                                timeAfterJump = 0;
+                                jumpKeysHolded = true;
                             
-                            animator.SetBool("Jumping", true);
-                            animator.SetBool("Landed", false);
+                                animator.SetBool("Jumping", true);
+                                animator.SetBool("Landed", false);
+                            }
+                            else
+                            {
+                                animator.SetBool("Landed", true);
+                                animator.SetBool("Jumping", false);
+                                animator.SetBool("Cayendo", false);
+                            }
                         }
                         else
                         {
                             animator.SetBool("Landed", true);
                             animator.SetBool("Jumping", false);
                             animator.SetBool("Cayendo", false);
+                            jumpKeysHolded = false;
                         }
                         
                         if (falling == true)
