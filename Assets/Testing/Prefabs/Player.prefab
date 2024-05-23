@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5259299927742517904}
   - component: {fileID: 5259299927742517907}
-  - component: {fileID: 5259299927742517906}
+  - component: {fileID: 7185144831185422876}
   - component: {fileID: 5259299927742517917}
   - component: {fileID: 5259299927742517916}
   - component: {fileID: 5259299927742517919}
@@ -77,18 +77,18 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -5109932653240421202, guid: b8b65ab87fa0b1349bbcbe432d428886, type: 3}
+  m_Sprite: {fileID: -5109932653240421202, guid: 61fecee549441e140b0fb9a1874ca050, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.9, y: 0.64}
+  m_Size: {x: 5.625, y: 4}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!95 &5259299927742517906
+--- !u!95 &7185144831185422876
 Animator:
   serializedVersion: 5
   m_ObjectHideFlags: 0
@@ -98,7 +98,7 @@ Animator:
   m_GameObject: {fileID: 5259299927742517918}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 143a11b368efb6445a4ef82db8857b16, type: 2}
+  m_Controller: {fileID: 9100000, guid: f93afbd2a6f7bbd498b82ab02f00d240, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -147,7 +147,7 @@ BoxCollider2D:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 0.9, y: 0.64}
-    newSize: {x: 0.9, y: 0.64}
+    newSize: {x: 5.625, y: 4}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
@@ -164,12 +164,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 5259299927742517918}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 666276c306d7bf54cb7069e24a88bf67, type: 3}
+  m_Script: {fileID: 11500000, guid: ea30de722187b3c4c8f592e1b8abb11f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   singletonInstance: {fileID: 855411258655464720, guid: 7504a6914893a194384f0302255afdac, type: 3}
   playerRigidbody2D: {fileID: 5259299927742517917}
-  animator: {fileID: 5259299927742517906}
+  animator: {fileID: 7185144831185422876}
   walkThrust: 2000
   maxVelocity: 10
   dashImpulse: 15
@@ -182,5 +182,11 @@ MonoBehaviour:
   jumpYVelocityError: 0.05
   rayLayer:
     serializedVersion: 2
-    m_Bits: 3072
+    m_Bits: 1024
   playerCollider: {fileID: 5259299927742517916}
+  attackADamage: 0
+  attackBDamage: 0
+  jumpAttackDamage: 0
+  jumpAttackTime: 0.5
+  jumpAttackDownwardsImpulse: 25
+  jumpKeysHoldedMinTime: 0.5

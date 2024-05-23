@@ -47,6 +47,19 @@ public class PlayerMovement : MonoBehaviour
     Collider2D _platformCollider2D;
     private bool _droppingFromPlatform = false;
     
+    // Attacking variables //
+    public int attackADamage;
+    public int attackBDamage;
+    public int jumpAttackDamage;
+    private bool _attackKeysHolded;
+    private bool _attacking;
+    private bool _stoppedInAir;
+    public float jumpAttackTime;
+    private bool _launchedDownwards;
+    public float jumpAttackDownwardsImpulse;
+    private float _jumpKeysHoldedTime;
+    public float jumpKeysHoldedMinTime;
+    
     // Player state machine variables //
     private bool _stateMachineWalking;
     private bool _stateMachineDashing;
@@ -55,6 +68,8 @@ public class PlayerMovement : MonoBehaviour
     private bool _stateMachineSquatting;
     private bool _stateMachineDropping;
     private bool _stateMachineFalling;
+    private bool _stateMachineAttackA;
+    private bool _stateMachineAttackB;
 
     void Awake()
     {
@@ -65,6 +80,7 @@ public class PlayerMovement : MonoBehaviour
     {
         _singleton.playerCoords = playerRigidbody2D.position;
         
+        Attacking();
         HorizontalMovement();
         VerticalMovement();
     }
@@ -91,7 +107,7 @@ public class PlayerMovement : MonoBehaviour
                 _stateMachineDashing = false;
             }
             
-            if (Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.S)) // "Left walk" keys
+            if (Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.S) && animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_Dash") == false && _attacking == false) // "Left walk" keys
             {
                 ApplyLeftWalkingForce();
                 _isItWalkingLeft = true;
@@ -104,8 +120,8 @@ public class PlayerMovement : MonoBehaviour
             }
             
             _walkForce = walkThrust * Time.deltaTime;
-                
-            if (Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.S)) // "Right walk" keys
+            
+            if (Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.S) && animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_Dash") == false && _attacking == false) // "Right walk" keys
             {
                 ApplyRightWalkingForce();
                 _isItWalkingRight = true;
@@ -128,7 +144,7 @@ public class PlayerMovement : MonoBehaviour
             
             _timeSinceDash += Time.deltaTime;
 
-            if (Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.S)) // "Left dash" keys
+            if (Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.S) && _stateMachineFalling == false && _stateMachineJumping == false) // "Left dash" keys
             {
                 if (_timeSinceDash >= dashCooldown)
                 {
@@ -139,7 +155,7 @@ public class PlayerMovement : MonoBehaviour
                 }
             }
 
-            if (Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.S)) // "Right dash" keys
+            if (Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.S) && _stateMachineFalling == false && _stateMachineJumping == false) // "Right dash" keys
             {
                 if (_timeSinceDash >= dashCooldown)
                 {
@@ -198,7 +214,7 @@ public class PlayerMovement : MonoBehaviour
                 {
                     if (_inAir == false)
                     {
-                        if (Input.GetKey(KeyCode.Space) && !Input.GetKey(KeyCode.S)) // "Jump" keys
+                        if (Input.GetKey(KeyCode.Space) && !Input.GetKey(KeyCode.S) && animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_Dash") == false) // "Jump" keys
                         {
                             if (_jumpKeysHolded == false)
                             {
@@ -266,7 +282,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 if (_timeFalling <= coyoteTime)
                 {
-                    if (Input.GetKey(KeyCode.Space) && !Input.GetKey(KeyCode.S)) // "Jump" keys
+                    if (Input.GetKey(KeyCode.Space) && !Input.GetKey(KeyCode.S) && animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_Dash") == true) // "Jump" keys
                     {
                         if (_jumpKeysHolded == false)
                         {
@@ -291,7 +307,7 @@ public class PlayerMovement : MonoBehaviour
 
             _timeFalling += Time.deltaTime;
 
-            if (_stateMachineJumping == true)
+            if (_stateMachineJumping == true && _stoppedInAir == false)
             {
                 if (Input.GetKey(KeyCode.Space) && !Input.GetKey(KeyCode.S)) // "Jump" keys
                 {
@@ -322,7 +338,7 @@ public class PlayerMovement : MonoBehaviour
                 }
             }
 
-            if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.Space) && _stateMachineDropping == false) // "Fall through platform" keys
+            if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.Space) && _stateMachineDropping == false && animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_Dash") == false) // "Fall through platform" keys
             {
                 if (jumpRay.collider != null)
                 {
@@ -340,4 +356,99 @@ public class PlayerMovement : MonoBehaviour
                 }
             }
         }
+
+
+
+    void Attacking()
+    {
+        if (Input.GetKey(KeyCode.Space))
+        {
+            _jumpKeysHoldedTime += Time.deltaTime;
+        }
+        else
+        {
+            _jumpKeysHoldedTime = 0;
+        }
+        
+        if (Input.GetKey(KeyCode.K)) // "Attack keys"
+        {
+            if (_attackKeysHolded == false)
+            {
+                _attackKeysHolded = true;
+            
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_AtacarA") == true || animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_AtacarAgachadoA") == true)
+                {
+                    animator.SetBool("AttackB", true);
+                    _stateMachineAttackB = true;
+
+                    _singleton.playerDamage = attackBDamage;
+                }
+                else
+                {
+                    if (animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_Idle") == true || animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_Correr") == true || animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_Agachado") == true)
+                    {
+                        animator.SetBool("AttackA", true);
+                        _stateMachineAttackA = true;
+                            
+                        _singleton.playerDamage = attackADamage;
+                    }
+                    if (animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_TakeOff") == true || animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_InAir") == true)
+                    {
+                        if (_jumpKeysHoldedTime >= jumpKeysHoldedMinTime)
+                        {
+                            animator.SetBool("AttackA", true);
+                            _stateMachineAttackA = true;
+                            
+                            _singleton.playerDamage = jumpAttackDamage;
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            _attackKeysHolded = false;
+        }
+        
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_AtacarA") == true || animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_AtacarAgachadoA") == true || animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_AtacarSaltandoA") == true)
+        {
+            animator.SetBool("AttackA", false);
+            _stateMachineAttackA = false;
+            _attacking = true;
+        }
+        else
+        {
+            _attacking = false;
+        }
+        
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_AtacarB") == true || animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_AtacarAgachadoB") == true)
+        {
+            animator.SetBool("AttackB", false);
+            _stateMachineAttackB = false;
+            _attacking = true;
+        }
+        
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_AtacarSaltandoA") == true)
+        {
+            if (_stoppedInAir == false)
+            {
+                playerRigidbody2D.velocity = Vector2.zero;
+                playerRigidbody2D.gravityScale = 0;
+                _stoppedInAir = true;
+            }
+
+            if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= jumpAttackTime && _launchedDownwards == false)
+            {
+                playerRigidbody2D.gravityScale = 3;
+                playerRigidbody2D.AddForce(transform.up * -jumpAttackDownwardsImpulse, ForceMode2D.Impulse);
+                _launchedDownwards = true;
+            }
+        }
+
+        if (_stateMachineLanded == true && animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_AtacarSaltandoA") == false)
+        {
+            _stoppedInAir = false;
+            _launchedDownwards = false;
+        }
+    }
 }
