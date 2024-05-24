@@ -38,6 +38,7 @@ public class PlayerMovement : MonoBehaviour
     public float maxTimeAfterJump;
     public float raycastDistance;
     public float jumpYVelocityError;
+    RaycastHit2D jumpRay;
     public LayerMask rayLayer;
     private bool _inAir = false;
     private bool _jumpKeysHolded;
@@ -57,8 +58,6 @@ public class PlayerMovement : MonoBehaviour
     public float jumpAttackTime;
     private bool _launchedDownwards;
     public float jumpAttackDownwardsImpulse;
-    private float _jumpKeysHoldedTime;
-    public float jumpKeysHoldedMinTime;
     
     // Player state machine variables //
     private bool _stateMachineWalking;
@@ -205,7 +204,7 @@ public class PlayerMovement : MonoBehaviour
     
     void VerticalMovement()
         {
-            RaycastHit2D jumpRay = Physics2D.Raycast(transform.position, -transform.up, raycastDistance, rayLayer);
+            jumpRay = Physics2D.Raycast(transform.position, -transform.up, raycastDistance, rayLayer);
             // Debug.DrawLine(transform.position, new Vector2(transform.position.x, transform.position.y - raycastDistance), Color.red);
             
             if (jumpRay.collider != null)
@@ -214,7 +213,7 @@ public class PlayerMovement : MonoBehaviour
                 {
                     if (_inAir == false)
                     {
-                        if (Input.GetKey(KeyCode.Space) && !Input.GetKey(KeyCode.S) && animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_Dash") == false) // "Jump" keys
+                        if (Input.GetKey(KeyCode.Space) && !Input.GetKey(KeyCode.S) && animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_Dash") == false && _attacking == false) // "Jump" keys
                         {
                             if (_jumpKeysHolded == false)
                             {
@@ -282,7 +281,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 if (_timeFalling <= coyoteTime)
                 {
-                    if (Input.GetKey(KeyCode.Space) && !Input.GetKey(KeyCode.S) && animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_Dash") == true) // "Jump" keys
+                    if (Input.GetKey(KeyCode.Space) && !Input.GetKey(KeyCode.S) && animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_Dash") == true && _attacking == false) // "Jump" keys
                     {
                         if (_jumpKeysHolded == false)
                         {
@@ -309,7 +308,7 @@ public class PlayerMovement : MonoBehaviour
 
             if (_stateMachineJumping == true && _stoppedInAir == false)
             {
-                if (Input.GetKey(KeyCode.Space) && !Input.GetKey(KeyCode.S)) // "Jump" keys
+                if (Input.GetKey(KeyCode.Space) && !Input.GetKey(KeyCode.S) && _attacking == false) // "Jump" keys
                 {
                     if (_timeAfterJump < maxTimeAfterJump)
                     {
@@ -324,7 +323,7 @@ public class PlayerMovement : MonoBehaviour
                 _timeAfterJump += Time.deltaTime;
             }
             
-            if (Input.GetKey(KeyCode.S) && _stateMachineDropping == false) // "Squat" key
+            if (Input.GetKey(KeyCode.S) && _stateMachineDropping == false && _attacking == false) // "Squat" key
             {
                 animator.SetBool("Squatting", true);
                 _stateMachineSquatting = true;
@@ -338,7 +337,7 @@ public class PlayerMovement : MonoBehaviour
                 }
             }
 
-            if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.Space) && _stateMachineDropping == false && animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_Dash") == false) // "Fall through platform" keys
+            if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.Space) && _stateMachineDropping == false && animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_Dash") == false && _attacking == false) // "Fall through platform" keys
             {
                 if (jumpRay.collider != null)
                 {
@@ -361,15 +360,6 @@ public class PlayerMovement : MonoBehaviour
 
     void Attacking()
     {
-        if (Input.GetKey(KeyCode.Space))
-        {
-            _jumpKeysHoldedTime += Time.deltaTime;
-        }
-        else
-        {
-            _jumpKeysHoldedTime = 0;
-        }
-        
         if (Input.GetKey(KeyCode.K)) // "Attack keys"
         {
             if (_attackKeysHolded == false)
@@ -394,13 +384,10 @@ public class PlayerMovement : MonoBehaviour
                     }
                     if (animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_TakeOff") == true || animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_InAir") == true)
                     {
-                        if (_jumpKeysHoldedTime >= jumpKeysHoldedMinTime)
-                        {
-                            animator.SetBool("AttackA", true);
-                            _stateMachineAttackA = true;
-                            
-                            _singleton.playerDamage = jumpAttackDamage;
-                        }
+                        animator.SetBool("AttackA", true);
+                        _stateMachineAttackA = true;
+
+                        _singleton.playerDamage = jumpAttackDamage;
                     }
                 }
             }
@@ -427,7 +414,7 @@ public class PlayerMovement : MonoBehaviour
             _stateMachineAttackB = false;
             _attacking = true;
         }
-        
+
         if (animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_AtacarSaltandoA") == true)
         {
             if (_stoppedInAir == false)
@@ -442,13 +429,15 @@ public class PlayerMovement : MonoBehaviour
                 playerRigidbody2D.gravityScale = 3;
                 playerRigidbody2D.AddForce(transform.up * -jumpAttackDownwardsImpulse, ForceMode2D.Impulse);
                 _launchedDownwards = true;
+                animator.SetBool("JumpAttackDone", true);
             }
         }
 
-        if (_stateMachineLanded == true && animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_AtacarSaltandoA") == false)
+        if (_stateMachineLanded == true && animator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_AtacarSaltandoA") == false && _launchedDownwards == true)
         {
             _stoppedInAir = false;
             _launchedDownwards = false;
+            animator.SetBool("JumpAttackDone", false);
         }
     }
 }
