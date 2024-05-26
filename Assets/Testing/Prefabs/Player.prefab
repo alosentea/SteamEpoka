@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7185144831185422876}
   - component: {fileID: 5259299927742517917}
   - component: {fileID: 5259299927742517916}
-  - component: {fileID: 5259299927742517919}
+  - component: {fileID: -8139299789269036184}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -98,7 +98,7 @@ Animator:
   m_GameObject: {fileID: 5259299927742517918}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: f93afbd2a6f7bbd498b82ab02f00d240, type: 2}
+  m_Controller: {fileID: 9100000, guid: 6b9c2d7a46274224eada3929148e06e9, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -155,7 +155,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.42, y: 0.61}
   m_EdgeRadius: 0
---- !u!114 &5259299927742517919
+--- !u!114 &-8139299789269036184
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -164,29 +164,30 @@ MonoBehaviour:
   m_GameObject: {fileID: 5259299927742517918}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ea30de722187b3c4c8f592e1b8abb11f, type: 3}
+  m_Script: {fileID: 11500000, guid: 4ea35a6f5ebe66447b58002c57dc5bd5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   singletonInstance: {fileID: 855411258655464720, guid: 7504a6914893a194384f0302255afdac, type: 3}
   playerRigidbody2D: {fileID: 5259299927742517917}
-  animator: {fileID: 7185144831185422876}
+  playerAnimator: {fileID: 7185144831185422876}
+  playerCollider: {fileID: 5259299927742517916}
   walkThrust: 2000
   maxVelocity: 10
   dashImpulse: 15
-  dashCooldown: 1.5
-  jumpImpulse: 11
-  jumpThrust: 1000
-  coyoteTime: 0.1
-  maxTimeAfterJump: 2
-  raycastDistance: 0.33
-  jumpYVelocityError: 0.05
-  rayLayer:
+  dashCooldown: 0
+  landedRaycastDistance: 0.33
+  landedRaycastLayers:
     serializedVersion: 2
-    m_Bits: 1024
-  playerCollider: {fileID: 5259299927742517916}
+    m_Bits: 7168
+  jumpImpulse: 12
+  coyoteTime: 0.1
+  jumpThrust: 750
+  jumpThrustTime: 1
+  dropRaycastLayers:
+    serializedVersion: 2
+    m_Bits: 6144
   attackADamage: 0
   attackBDamage: 0
   jumpAttackDamage: 0
-  jumpAttackTime: 0.5
+  jumpAttackTime: 0.75
   jumpAttackDownwardsImpulse: 25
-  jumpKeysHoldedMinTime: 0.5

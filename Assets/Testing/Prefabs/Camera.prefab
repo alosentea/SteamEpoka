@@ -97,7 +97,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b60c8e3628f7520499c9a3fc98fe6916, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  singletonInstance: {fileID: 855411258655464720, guid: 7504a6914893a194384f0302255afdac, type: 3}
   pow: 2
   div: 100
   sum: 0
-  singletonInstance: {fileID: 855411258655464720, guid: 7504a6914893a194384f0302255afdac, type: 3}
+  mul: 100

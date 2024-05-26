@@ -5,19 +5,19 @@ using UnityEngine;
 public class CameraMovement : MonoBehaviour
 {
     // SINGLETON //
-    private Singleton singleton;
+    private Singleton _singleton;
     [SerializeField] private GameObject singletonInstance;
 
     void Awake()
     {
         // SINGLETON //
-        singleton = singletonInstance.GetComponent<Singleton>();
+        _singleton = singletonInstance.GetComponent<Singleton>();
     }
 
 
     Vector3 playerCoords;
-    float distance = 0;
-    float velocity = 0;
+    float _distance = 0;
+    float _velocity = 0;
     public float pow;
     public float div;
     public float sum;
@@ -27,13 +27,13 @@ public class CameraMovement : MonoBehaviour
     {
         void PlayerFollow()
         {
-            playerCoords = new Vector3(singleton.playerCoords.x, singleton.playerCoords.y, -10.0f);
+            playerCoords = new Vector3(_singleton.playerCoords.x, _singleton.playerCoords.y, -10.0f);
             
-            distance = Vector3.Distance(transform.position, playerCoords);
-            velocity = (Mathf.Pow(distance, pow) / div) + sum;
-            velocity = velocity * Time.fixedDeltaTime * mul;
+            _distance = Vector3.Distance(transform.position, playerCoords);
+            _velocity = (Mathf.Pow(_distance, pow) / div) + sum;
+            _velocity = _velocity * Time.fixedDeltaTime * mul;
 
-            transform.position = Vector3.MoveTowards(transform.position, playerCoords, velocity);
+            transform.position = Vector3.MoveTowards(transform.position, playerCoords, _velocity);
         }
 
         PlayerFollow();
