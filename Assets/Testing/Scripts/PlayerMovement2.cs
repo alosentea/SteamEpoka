@@ -86,10 +86,6 @@ public class PlayerMovement2 : MonoBehaviour
     
     void Update()
     {
-        _singleton.playerCoords = playerRigidbody2D.position;
-        
-        
-        
         AddDeltaTime();
         LandedDetector();
         

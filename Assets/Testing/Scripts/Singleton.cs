@@ -21,6 +21,5 @@ public class Singleton : MonoBehaviour
         }
     }
 
-    public Vector2 playerCoords;
     public int playerDamage;
 }
