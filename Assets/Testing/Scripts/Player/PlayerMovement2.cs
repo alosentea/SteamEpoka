@@ -80,6 +80,8 @@ public class PlayerMovement2 : MonoBehaviour
     void Awake()
     {
         _singleton = singletonInstance.GetComponent<Singleton>();
+        
+        _singleton.playerHealth = 100;
     }
     
     
@@ -93,7 +95,7 @@ public class PlayerMovement2 : MonoBehaviour
         
         Squatting();
         
-        if (!_isSquatting)
+        if (!_isSquatting && _isDashing == 0 && !_isAttacking)
         {
             Jump();
         }

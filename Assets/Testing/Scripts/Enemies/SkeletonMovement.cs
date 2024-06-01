@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public class EnemyMovement : MonoBehaviour
+public class SkeletonMovement : MonoBehaviour
 {
 
     // SINGLETON //
@@ -11,10 +11,15 @@ public class EnemyMovement : MonoBehaviour
 
     // Enemy Components //
     public Rigidbody2D enemyRigidbody2D;
+    public Animator enemyAnimator;
     public Collider2D enemyCollider;
     
     // Player Components //
     public Collider2D playerCollider;
+    
+    // "OnTrigger" methods variables //
+    private bool _playerInsideTrigger;
+    private bool _facingPlayerInsideTrigger;
 
     // "Sonar" method variables //
     RaycastHit2D _sonarRaycast;
@@ -37,7 +42,15 @@ public class EnemyMovement : MonoBehaviour
     private int _isWalking;
     private bool _isWalkingLeft;
     private bool _isWalkingRight;
-
+    
+    // "Death" method variables //
+    private bool _isDying;
+    
+    // "Attack" method variables //
+    private bool _isAttacking;
+    public float attackCooldown;
+    private float _timeSinceAttack;
+    public int attackDamage;
 
 
 
@@ -45,8 +58,11 @@ public class EnemyMovement : MonoBehaviour
     void Awake()
     {
         _singleton = singletonInstance.GetComponent<Singleton>();
+        
         Physics2D.IgnoreCollision(enemyCollider, playerCollider, true);
+        
         _singleton.enemyHealth[int.Parse(gameObject.name)] = 10;
+        _timeSinceAttack = attackCooldown;
     }
 
 
@@ -56,7 +72,14 @@ public class EnemyMovement : MonoBehaviour
     void Update()
     {
         Sonar();
-        Walk();
+
+        if (!_isDying)
+        {
+            Walk();
+        }
+        
+        Attack();
+        
         Death();
         
         AddDeltaTime();
@@ -73,6 +96,7 @@ public class EnemyMovement : MonoBehaviour
             if (!_singleton.enemyTrigger[int.Parse(gameObject.name)])
             {
                 _singleton.enemyTrigger[int.Parse(gameObject.name)] = true;
+                _playerInsideTrigger = true;
             }
         }
     }
@@ -83,6 +107,7 @@ public class EnemyMovement : MonoBehaviour
             if (_singleton.enemyTrigger[int.Parse(gameObject.name)])
             {
                 _singleton.enemyTrigger[int.Parse(gameObject.name)] = false;
+                _playerInsideTrigger = false;
             }
         }
     }
@@ -97,6 +122,7 @@ public class EnemyMovement : MonoBehaviour
                     if (!_singleton.facingPlayer[int.Parse(gameObject.name)])
                     {
                         _singleton.facingPlayer[int.Parse(gameObject.name)] = true;
+                        _facingPlayerInsideTrigger = true;
                     }
                 }
                 else
@@ -104,6 +130,7 @@ public class EnemyMovement : MonoBehaviour
                     if (_singleton.facingPlayer[int.Parse(gameObject.name)])
                     {
                         _singleton.facingPlayer[int.Parse(gameObject.name)] = false;
+                        _facingPlayerInsideTrigger = false;
                     }
                 }
             }
@@ -112,6 +139,7 @@ public class EnemyMovement : MonoBehaviour
                 if (_singleton.facingPlayer[int.Parse(gameObject.name)])
                 {
                     _singleton.facingPlayer[int.Parse(gameObject.name)] = false;
+                    _facingPlayerInsideTrigger = false;
                 }
             }
         }
@@ -127,7 +155,7 @@ public class EnemyMovement : MonoBehaviour
         _sonarSin = Mathf.Sin(Mathf.Deg2Rad * _sonarAngle);
 
         _sonarRaycast = Physics2D.Raycast(transform.position, new Vector2(_sonarCos, _sonarSin), sonarDistance, sonarLayers);
-        //Debug.DrawRay(transform.position, new Vector2(_sonarCos*sonarDistance, _sonarSin*sonarDistance), Color.red);
+        Debug.DrawRay(transform.position, new Vector2(_sonarCos*sonarDistance, _sonarSin*sonarDistance), Color.red);
 
         _sonarAngle += sonarVelocity * Time.deltaTime;
         
@@ -154,7 +182,7 @@ public class EnemyMovement : MonoBehaviour
             }
         }
        
-        if (_timeWithoutDetecting > maxTimeWithoutDetecting)
+        if (_timeWithoutDetecting > maxTimeWithoutDetecting || _facingPlayerInsideTrigger)
         {
             _walkLeft = false;
             _walkRight = false;
@@ -214,11 +242,11 @@ public class EnemyMovement : MonoBehaviour
 
         if (_isWalking == 1)
         {
-            //enemyAnimator.SetBool("Walking", true);
+            enemyAnimator.SetBool("Walking", true);
         }
         else
         {
-            //enemyAnimator.SetBool("Walking", false);
+            enemyAnimator.SetBool("Walking", false);
         }
     }
     
@@ -242,6 +270,7 @@ public class EnemyMovement : MonoBehaviour
     private void AddDeltaTime()
     {
         _timeWithoutDetecting += Time.deltaTime;
+        _timeSinceAttack += Time.deltaTime;
     }
 
 
@@ -250,7 +279,47 @@ public class EnemyMovement : MonoBehaviour
     {
         if (_singleton.enemyHealth[int.Parse(gameObject.name)] <= 0)
         {
-            Destroy(gameObject);
+            enemyAnimator.SetBool("Death", true);
+            _isDying = true;
+
+            if (enemyAnimator.GetCurrentAnimatorStateInfo(0).IsName("SkeletonAnimations_Muerte"))
+            {
+                if (enemyAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
+                {
+                    _singleton.facingEnemy[int.Parse(gameObject.name)] = false;
+                    Destroy(gameObject);
+                }
+            }
+        }
+    }
+
+
+
+    private void Attack()
+    {
+        if (_facingPlayerInsideTrigger)
+        {
+            if (_timeSinceAttack > attackCooldown)
+            {
+                if (!_isAttacking)
+                {
+                    enemyAnimator.SetBool("Attack", true);
+                    _isAttacking = true;
+
+                    _singleton.playerHealth -= attackDamage;
+                }
+            }
+        }
+        
+        if (enemyAnimator.GetCurrentAnimatorStateInfo(0).IsName("SkeletonAnimations_Atacar"))
+        {
+            if (enemyAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
+            {
+                enemyAnimator.SetBool("Attack", false);
+                _isAttacking = false;
+                    
+                _timeSinceAttack = 0;
+            }
         }
     }
 }

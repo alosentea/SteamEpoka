@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,19 +18,32 @@ public class Singleton : MonoBehaviour
         }
         else
         {
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
         }
+
+        
+        
+        
+        
+        enemyHealth = new int[entityNumber];
+
+        enemyTrigger = new bool[entityNumber];
+        playerTrigger = new bool[entityNumber];
+        
+        facingEnemy = new bool[entityNumber];
+        facingPlayer = new bool[entityNumber];
     }
     
-    public int entityNumber = 10;
-    private static readonly int EntityNumber = 10;
+    
+    
+    public int entityNumber;
 
     public int playerHealth;
-    public int[] enemyHealth = new int[EntityNumber];
+    public int[] enemyHealth;
     
-    public bool[] enemyTrigger = new bool[EntityNumber];
-    public bool[] playerTrigger = new bool[EntityNumber];
+    public bool[] enemyTrigger;
+    public bool[] playerTrigger;
     
-    public bool[] facingEnemy = new bool[EntityNumber];
-    public bool[] facingPlayer = new bool[EntityNumber];
+    public bool[] facingEnemy;
+    public bool[] facingPlayer;
 }
