@@ -44,5 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5721d299f4c6301489dc6ca2bbef5d9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  singletonInstance: {fileID: 855411258655464720}
-  playerCoords: {x: -0.000000075244074, y: -3.4612648}
+  playerHealth: 0
+  playerDamage: 0
+  enemyTrigger: 00000000000000000000
+  playerTrigger: 00000000000000000000

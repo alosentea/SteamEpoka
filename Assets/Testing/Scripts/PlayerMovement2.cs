@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -64,6 +65,7 @@ public class PlayerMovement2 : MonoBehaviour
     public int attackADamage;
     public int attackBDamage;
     public int jumpAttackDamage;
+    private int attackAux;
     private bool _attackKeysHolded;
     private bool _isAttacking;
     private bool _stoppedInAir;
@@ -121,7 +123,62 @@ public class PlayerMovement2 : MonoBehaviour
         
         Attack();
     }
-
+    
+    
+    
+    
+    
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag == "Enemy")
+        {
+            if (!_singleton.playerTrigger[int.Parse(collision.gameObject.name)])
+            {
+                _singleton.playerTrigger[int.Parse(collision.gameObject.name)] = true;
+            }
+        }
+    }
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.tag == "Enemy")
+        {
+            if (_singleton.playerTrigger[int.Parse(collision.gameObject.name)])
+            {
+                _singleton.playerTrigger[int.Parse(collision.gameObject.name)] = false;
+            }
+        }
+    }
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.tag == "Enemy")
+        {
+            if ((collision.gameObject.transform.position.x >= transform.position.x && transform.right.x > 0) || (collision.gameObject.transform.position.x <= transform.position.x && transform.right.x < 0))
+            {
+                if (_singleton.playerTrigger[int.Parse(collision.gameObject.name)])
+                {
+                    if (!_singleton.facingEnemy[int.Parse(collision.gameObject.name)])
+                    {
+                        _singleton.facingEnemy[int.Parse(collision.gameObject.name)] = true;
+                    }
+                }
+                else
+                {
+                    if (_singleton.facingEnemy[int.Parse(collision.gameObject.name)])
+                    {
+                        _singleton.facingEnemy[int.Parse(collision.gameObject.name)] = false;
+                    }
+                }
+            }
+            else
+            {
+                if (_singleton.facingEnemy[int.Parse(collision.gameObject.name)])
+                {
+                    _singleton.facingEnemy[int.Parse(collision.gameObject.name)] = false;
+                }
+            }
+        }
+    }
+    
     
     
     
@@ -445,8 +502,16 @@ public class PlayerMovement2 : MonoBehaviour
                 if (playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_AtacarA") || playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_AtacarAgachadoA"))
                 {
                     playerAnimator.SetBool("AttackB", true);
-
-                    _singleton.playerDamage = attackBDamage;
+                    
+                    attackAux = 0;
+                    while (attackAux < _singleton.entityNumber)
+                    {
+                        if (_singleton.facingEnemy[attackAux])
+                        {
+                            _singleton.enemyHealth[attackAux] -= attackBDamage;
+                        }
+                        attackAux++;
+                    }
                 }
                 else
                 {
@@ -454,13 +519,19 @@ public class PlayerMovement2 : MonoBehaviour
                     {
                         playerAnimator.SetBool("AttackA", true);
                             
-                        _singleton.playerDamage = attackADamage;
+                        attackAux = 0;
+                        while (attackAux < _singleton.entityNumber)
+                        {
+                            if (_singleton.facingEnemy[attackAux])
+                            {
+                                _singleton.enemyHealth[attackAux] -= attackADamage;
+                            }
+                            attackAux++;
+                        }
                     }
                     if (playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_TakeOff") || playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_InAir"))
                     {
                         playerAnimator.SetBool("AttackA", true);
-
-                        _singleton.playerDamage = jumpAttackDamage;
                     }
                 }
             }
@@ -494,13 +565,22 @@ public class PlayerMovement2 : MonoBehaviour
                 playerRigidbody2D.gravityScale = 0;
                 _stoppedInAir = true;
             }
+            
+            attackAux = 0;
+            while (attackAux < _singleton.entityNumber)
+            {
+                if (_singleton.playerTrigger[attackAux])
+                {
+                    _singleton.enemyHealth[attackAux] -= jumpAttackDamage;
+                }
+                attackAux++;
+            }
 
             if (playerAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= jumpAttackTime && !_launchedDownwards)
             {
                 playerRigidbody2D.gravityScale = 3;
                 playerRigidbody2D.AddForce(transform.up * -jumpAttackDownwardsImpulse, ForceMode2D.Impulse);
                 _launchedDownwards = true;
-                playerAnimator.SetBool("JumpAttackDone", true);
             }
         }
 
@@ -508,7 +588,6 @@ public class PlayerMovement2 : MonoBehaviour
         {
             _stoppedInAir = false;
             _launchedDownwards = false;
-            playerAnimator.SetBool("JumpAttackDone", false);
         }
     }
 }

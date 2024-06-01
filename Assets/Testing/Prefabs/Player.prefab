@@ -14,9 +14,10 @@ GameObject:
   - component: {fileID: 5259299927742517917}
   - component: {fileID: 5259299927742517916}
   - component: {fileID: -8139299789269036184}
+  - component: {fileID: 6194713564264266655}
   m_Layer: 13
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -167,7 +168,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ea35a6f5ebe66447b58002c57dc5bd5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  singletonInstance: {fileID: 855411258655464720, guid: 7504a6914893a194384f0302255afdac, type: 3}
+  singletonInstance: {fileID: 0}
   playerRigidbody2D: {fileID: 5259299927742517917}
   playerAnimator: {fileID: 7185144831185422876}
   playerCollider: {fileID: 5259299927742517916}
@@ -186,8 +187,24 @@ MonoBehaviour:
   dropRaycastLayers:
     serializedVersion: 2
     m_Bits: 6144
-  attackADamage: 0
-  attackBDamage: 0
-  jumpAttackDamage: 0
+  attackADamage: 10
+  attackBDamage: 20
+  jumpAttackDamage: 30
   jumpAttackTime: 0.75
   jumpAttackDownwardsImpulse: 25
+--- !u!58 &6194713564264266655
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5259299927742517918}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: -0.15, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.5

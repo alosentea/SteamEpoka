@@ -14,9 +14,10 @@ GameObject:
   - component: {fileID: -726370355553419586}
   - component: {fileID: 3628025803969941817}
   - component: {fileID: -8173169542739287871}
+  - component: {fileID: -6278217060128785040}
   m_Layer: 0
   m_Name: Enemigo
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -167,14 +168,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06f12a070a9073b439089d92b9f4f12e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  singletonInstance: {fileID: 855411258655464720, guid: 7504a6914893a194384f0302255afdac, type: 3}
+  singletonInstance: {fileID: 0}
   enemyRigidbody2D: {fileID: -726370355553419586}
-  sonarVelocity: 5000
+  enemyCollider: {fileID: 3628025803969941817}
+  playerCollider: {fileID: 0}
+  sonarVelocity: 1000
   sonarDistance: 5
+  visualField: 45
+  maxTimeWithoutDetecting: 3
   sonarLayers:
     serializedVersion: 2
     m_Bits: 8200
-  _walkLeft: 0
-  _walkRight: 0
   walkThrust: 1000
   maxVelocity: 5
+--- !u!58 &-6278217060128785040
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4646800321649756809}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.5
