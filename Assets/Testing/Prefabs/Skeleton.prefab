@@ -184,6 +184,8 @@ MonoBehaviour:
   maxVelocity: 3
   attackCooldown: 1.5
   attackDamage: 5
+  hitTime: 0.75
+  enemyHealth: 20
 --- !u!58 &-6278217060128785040
 CircleCollider2D:
   m_ObjectHideFlags: 0

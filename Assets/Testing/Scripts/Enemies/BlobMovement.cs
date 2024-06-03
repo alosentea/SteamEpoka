@@ -51,6 +51,12 @@ public class BlobMovement : MonoBehaviour
     public float attackCooldown;
     private float _timeSinceAttack;
     public int attackDamage;
+    public float hitTime;
+    private bool _justAttacked;
+    
+    // "Life" method variables //
+    private bool _isLifed;
+    public int enemyHealth;
 
 
 
@@ -61,7 +67,6 @@ public class BlobMovement : MonoBehaviour
         
         Physics2D.IgnoreCollision(enemyCollider, playerCollider, true);
         
-        _singleton.enemyHealth[int.Parse(gameObject.name)] = 10;
         _timeSinceAttack = attackCooldown;
     }
 
@@ -71,6 +76,8 @@ public class BlobMovement : MonoBehaviour
 
     void Update()
     {
+        Life();
+        
         Sonar();
 
         if (!_isDying)
@@ -305,21 +312,43 @@ public class BlobMovement : MonoBehaviour
                 {
                     enemyAnimator.SetBool("Attack", true);
                     _isAttacking = true;
-
-                    _singleton.playerHealth -= attackDamage;
                 }
             }
         }
         
         if (enemyAnimator.GetCurrentAnimatorStateInfo(0).IsName("BlobAnimations_Atacar"))
         {
+            if (enemyAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime > hitTime)
+            {
+                if (_facingPlayerInsideTrigger)
+                {
+                    if (!_justAttacked)
+                    {
+                        _singleton.playerHealth -= attackDamage;
+                        _justAttacked = true;
+                    }
+                }
+            }
+            
             if (enemyAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
             {
                 enemyAnimator.SetBool("Attack", false);
                 _isAttacking = false;
+                _justAttacked = false;
                     
                 _timeSinceAttack = 0;
             }
+        }
+    }
+    
+    
+    
+    private void Life()
+    {
+        if (!_isLifed)
+        {
+            _singleton.enemyHealth[int.Parse(gameObject.name)] = enemyHealth;
+            _isLifed = true;
         }
     }
 }
