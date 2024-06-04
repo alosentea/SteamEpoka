@@ -31,7 +31,7 @@ public class Singleton : MonoBehaviour
         playerDamage = 0;
         enemyHealth = new int[entityNumber];
 
-        playerO2 = 1000;
+        playerO2 = maxO2;
 
         enemyTrigger = new bool[entityNumber];
         playerTrigger = new bool[entityNumber];
@@ -90,6 +90,8 @@ public class Singleton : MonoBehaviour
 
     public int playerDamage;
     public int[] enemyHealth;
+
+    public float maxO2;
 
     public float playerO2;
     private float _auxO2Time;

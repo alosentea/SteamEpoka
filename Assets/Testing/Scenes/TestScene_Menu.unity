@@ -823,6 +823,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: SingletonInstance
       objectReference: {fileID: 0}
+    - target: {fileID: 8539419387216175893, guid: 7504a6914893a194384f0302255afdac, type: 3}
+      propertyPath: maxO2
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 8539419387216175893, guid: 7504a6914893a194384f0302255afdac, type: 3}
+      propertyPath: playerO2
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7504a6914893a194384f0302255afdac, type: 3}
 --- !u!1 &1893513590
