@@ -12,20 +12,23 @@ public class BackgroundLayers : MonoBehaviour
     public float layerVelocity;
     public float layerYOffset;
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         layerRigidbody2D.velocity = new Vector2(playerRigidbody2D.velocity.x * layerVelocity * 0.5f, 0);
         transform.position = new Vector3(transform.position.x, cameraGameObject.transform.position.y + layerYOffset, transform.position.z);
-        
-        if (cameraGameObject.transform.position.x - transform.position.x >= 16)
+    }
+
+    void Update()
+    {
+        if (playerRigidbody2D.transform.position.x - transform.position.x >= 16)
         {
-            var Clone = Instantiate(gameObject, new Vector3(transform.position.x + 31.96f, transform.position.y, transform.position.z), Quaternion.identity);
+            var Clone = Instantiate(gameObject, new Vector3(transform.position.x + 31.98f, transform.position.y, transform.position.z), Quaternion.identity);
             Clone.name = gameObject.name;
             Destroy(gameObject);
         }
-        if (cameraGameObject.transform.position.x - transform.position.x <= -16)
+        if (playerRigidbody2D.transform.position.x - transform.position.x <= -16)
         {
-            var Clone = Instantiate(gameObject, new Vector3(transform.position.x - 31.96f, transform.position.y, transform.position.z), Quaternion.identity);
+            var Clone = Instantiate(gameObject, new Vector3(transform.position.x - 31.98f, transform.position.y, transform.position.z), Quaternion.identity);
             Clone.name = gameObject.name;
             Destroy(gameObject);
         }
