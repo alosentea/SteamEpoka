@@ -96,6 +96,8 @@ public class SkeletonMovement : MonoBehaviour
         Damage();
         
         AddDeltaTime();
+        
+        Debug.Log(_facingPlayerInsideTrigger);
     }
 
 
@@ -121,6 +123,9 @@ public class SkeletonMovement : MonoBehaviour
             {
                 _singleton.enemyTrigger[int.Parse(gameObject.name)] = false;
                 _playerInsideTrigger = false;
+                
+                _singleton.facingPlayer[int.Parse(gameObject.name)] = false;
+                _facingPlayerInsideTrigger = false;
             }
         }
     }
@@ -128,9 +133,9 @@ public class SkeletonMovement : MonoBehaviour
     {
         if (collision.tag == "Player")
         {
-            if ((collision.gameObject.transform.position.x >= transform.position.x && transform.right.x > 0) || (collision.gameObject.transform.position.x <= transform.position.x && transform.right.x < 0))
+            if (_singleton.enemyTrigger[int.Parse(gameObject.name)])
             {
-                if (_singleton.enemyTrigger[int.Parse(gameObject.name)])
+                if ((collision.gameObject.transform.position.x >= transform.position.x && transform.right.x > 0) || (collision.gameObject.transform.position.x <= transform.position.x && transform.right.x < 0))
                 {
                     if (!_singleton.facingPlayer[int.Parse(gameObject.name)])
                     {
@@ -145,14 +150,6 @@ public class SkeletonMovement : MonoBehaviour
                         _singleton.facingPlayer[int.Parse(gameObject.name)] = false;
                         _facingPlayerInsideTrigger = false;
                     }
-                }
-            }
-            else
-            {
-                if (_singleton.facingPlayer[int.Parse(gameObject.name)])
-                {
-                    _singleton.facingPlayer[int.Parse(gameObject.name)] = false;
-                    _facingPlayerInsideTrigger = false;
                 }
             }
         }

@@ -128,7 +128,7 @@ public class PlayerMovement2 : MonoBehaviour
         
         Attack();
         
-        Die();
+        //Die();
     }
     
     
@@ -152,6 +152,8 @@ public class PlayerMovement2 : MonoBehaviour
             if (_singleton.playerTrigger[int.Parse(collision.gameObject.name)])
             {
                 _singleton.playerTrigger[int.Parse(collision.gameObject.name)] = false;
+                
+                _singleton.facingEnemy[int.Parse(collision.gameObject.name)] = false;
             }
         }
     }
@@ -159,9 +161,9 @@ public class PlayerMovement2 : MonoBehaviour
     {
         if (collision.tag == "Enemy")
         {
-            if ((collision.gameObject.transform.position.x >= transform.position.x && transform.right.x > 0) || (collision.gameObject.transform.position.x <= transform.position.x && transform.right.x < 0))
+            if (_singleton.playerTrigger[int.Parse(collision.gameObject.name)])
             {
-                if (_singleton.playerTrigger[int.Parse(collision.gameObject.name)])
+                if ((collision.gameObject.transform.position.x >= transform.position.x && transform.right.x > 0) || (collision.gameObject.transform.position.x <= transform.position.x && transform.right.x < 0))
                 {
                     if (!_singleton.facingEnemy[int.Parse(collision.gameObject.name)])
                     {
@@ -174,13 +176,6 @@ public class PlayerMovement2 : MonoBehaviour
                     {
                         _singleton.facingEnemy[int.Parse(collision.gameObject.name)] = false;
                     }
-                }
-            }
-            else
-            {
-                if (_singleton.facingEnemy[int.Parse(collision.gameObject.name)])
-                {
-                    _singleton.facingEnemy[int.Parse(collision.gameObject.name)] = false;
                 }
             }
         }

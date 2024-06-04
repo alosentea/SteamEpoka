@@ -877,6 +877,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -8173169542739287871, guid: 59a168abcfd9b41469873c640cf4142a, type: 3}
+      propertyPath: hitTime
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: -8173169542739287871, guid: 59a168abcfd9b41469873c640cf4142a, type: 3}
       propertyPath: playerCollider
       value: 
       objectReference: {fileID: 2055937352}
@@ -1009,6 +1013,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -6737623203541276733, guid: c6a3a5b8a83a0f444a231efc6f9c33a4, type: 3}
+      propertyPath: hitTime
+      value: 0.75
+      objectReference: {fileID: 0}
     - target: {fileID: -6737623203541276733, guid: c6a3a5b8a83a0f444a231efc6f9c33a4, type: 3}
       propertyPath: playerCollider
       value: 
