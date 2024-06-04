@@ -76,6 +76,9 @@ public class PlayerMovement2 : MonoBehaviour
     // "Die" method variables //
     public Vector2 checkpointCoords;
     
+    // "Checkpoint" method variables //
+    private Animator _checkpointAnimator;
+    
     
     
     
@@ -128,7 +131,7 @@ public class PlayerMovement2 : MonoBehaviour
         
         Attack();
         
-        //Die();
+        Die();
     }
     
     
@@ -142,6 +145,26 @@ public class PlayerMovement2 : MonoBehaviour
             if (!_singleton.playerTrigger[int.Parse(collision.gameObject.name)])
             {
                 _singleton.playerTrigger[int.Parse(collision.gameObject.name)] = true;
+            }
+        }
+        
+        if (collision.tag == "Checkpoint")
+        {
+            if (_checkpointAnimator == null)
+            {
+                _checkpointAnimator = collision.GetComponent<Animator>();
+                _checkpointAnimator.SetBool("Checkpoint", true);
+                checkpointCoords = collision.gameObject.transform.position;
+            }
+            else
+            {
+                if (_checkpointAnimator != collision.GetComponent<Animator>())
+                {
+                    _checkpointAnimator.SetBool("Checkpoint", false);
+                    _checkpointAnimator = collision.GetComponent<Animator>();
+                    _checkpointAnimator.SetBool("Checkpoint", true);
+                    checkpointCoords = collision.gameObject.transform.position;
+                }
             }
         }
     }

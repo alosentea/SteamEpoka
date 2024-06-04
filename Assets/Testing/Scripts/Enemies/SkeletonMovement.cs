@@ -96,8 +96,6 @@ public class SkeletonMovement : MonoBehaviour
         Damage();
         
         AddDeltaTime();
-        
-        Debug.Log(_facingPlayerInsideTrigger);
     }
 
 
