@@ -63,7 +63,7 @@ public class BlobMovement : MonoBehaviour
 
     void Awake()
     {
-        _singleton = singletonInstance.GetComponent<Singleton>();
+        _singleton = GameObject.FindWithTag("Singleton").GetComponent<Singleton>();
         
         Physics2D.IgnoreCollision(enemyCollider, playerCollider, true);
         
@@ -324,7 +324,7 @@ public class BlobMovement : MonoBehaviour
                 {
                     if (!_justAttacked)
                     {
-                        _singleton.playerHealth -= attackDamage;
+                        _singleton.playerDamage += attackDamage;
                         _justAttacked = true;
                     }
                 }

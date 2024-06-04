@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &855411258655464720
+--- !u!1 &7972413778834132081
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,22 +8,22 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8951920088447667139}
-  - component: {fileID: -1300589907409348234}
+  - component: {fileID: 7060786631106761493}
+  - component: {fileID: 8539419387216175893}
   m_Layer: 0
   m_Name: SingletonInstance
-  m_TagString: Untagged
+  m_TagString: Singleton
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &8951920088447667139
+--- !u!4 &7060786631106761493
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 855411258655464720}
+  m_GameObject: {fileID: 7972413778834132081}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.008561434, y: -0.034545705, z: 0.043146327}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -32,19 +32,23 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-1300589907409348234
+--- !u!114 &8539419387216175893
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 855411258655464720}
+  m_GameObject: {fileID: 7972413778834132081}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5721d299f4c6301489dc6ca2bbef5d9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerHealth: 0
+  entityNumber: 10
   playerDamage: 0
+  enemyHealth: 00000000000000000000000000000000000000000000000000000000000000000000000000000000
+  playerO2: 1000
   enemyTrigger: 00000000000000000000
   playerTrigger: 00000000000000000000
+  facingEnemy: 00000000000000000000
+  facingPlayer: 00000000000000000000

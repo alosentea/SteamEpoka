@@ -5,8 +5,13 @@ using UnityEngine;
 
 public class Singleton : MonoBehaviour
 {
+    
     public static int singletonInstancesNumber;
 
+    
+    
+    
+    
     void Awake()
     {
         singletonInstancesNumber++;
@@ -18,14 +23,16 @@ public class Singleton : MonoBehaviour
         }
         else
         {
-            //DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(gameObject);
         }
 
         
         
         
-        
+        playerDamage = 0;
         enemyHealth = new int[entityNumber];
+
+        playerO2 = 1000;
 
         enemyTrigger = new bool[entityNumber];
         playerTrigger = new bool[entityNumber];
@@ -33,13 +40,33 @@ public class Singleton : MonoBehaviour
         facingEnemy = new bool[entityNumber];
         facingPlayer = new bool[entityNumber];
     }
+
+    
+    
+    
+
+    private void Update()
+    {
+        if (_auxO2Time >= 1)
+        {
+            playerO2 -= playerDamage;
+            _auxO2Time = 0;
+        }
+
+        _auxO2Time += Time.deltaTime;
+    }
+
+
     
     
     
     public int entityNumber;
 
-    public int playerHealth;
+    public int playerDamage;
     public int[] enemyHealth;
+
+    public float playerO2;
+    private float _auxO2Time;
     
     public bool[] enemyTrigger;
     public bool[] playerTrigger;

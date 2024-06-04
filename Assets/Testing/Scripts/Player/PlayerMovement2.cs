@@ -73,15 +73,18 @@ public class PlayerMovement2 : MonoBehaviour
     private bool _launchedDownwards;
     public float jumpAttackDownwardsImpulse;
     
+    // "Die" method variables //
+    public Vector2 checkpointCoords;
+    
     
     
     
     
     void Awake()
     {
-        _singleton = singletonInstance.GetComponent<Singleton>();
+        _singleton = GameObject.FindWithTag("Singleton").GetComponent<Singleton>();
         
-        _singleton.playerHealth = 100;
+        _singleton.playerDamage = 0;
     }
     
     
@@ -124,6 +127,8 @@ public class PlayerMovement2 : MonoBehaviour
         Dropping();
         
         Attack();
+        
+        Die();
     }
     
     
@@ -590,6 +595,18 @@ public class PlayerMovement2 : MonoBehaviour
         {
             _stoppedInAir = false;
             _launchedDownwards = false;
+        }
+    }
+
+
+
+    private void Die()
+    {
+        if (_singleton.playerO2 <= 0)
+        {
+            transform.position = checkpointCoords;
+            _singleton.playerDamage = 0;
+            _singleton.playerO2 = 1000;
         }
     }
 }

@@ -143,11 +143,11 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.13, y: 0}
+  m_Offset: {x: -0.27, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 7.5, y: 4}
+    oldSize: {x: 1.2, y: 0.64}
     newSize: {x: 7.5, y: 4}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -192,6 +192,7 @@ MonoBehaviour:
   jumpAttackDamage: 30
   jumpAttackTime: 0.75
   jumpAttackDownwardsImpulse: 25
+  checkpointCoords: {x: -1, y: 0}
 --- !u!58 &6194713564264266655
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -205,6 +206,6 @@ CircleCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.13, y: 0}
+  m_Offset: {x: -0.27, y: 0}
   serializedVersion: 2
-  m_Radius: 0.3
+  m_Radius: 0.4
