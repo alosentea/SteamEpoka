@@ -706,11 +706,35 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8539419387216175893, guid: 7504a6914893a194384f0302255afdac, type: 3}
       propertyPath: maxO2
-      value: 1000
+      value: 600
       objectReference: {fileID: 0}
     - target: {fileID: 8539419387216175893, guid: 7504a6914893a194384f0302255afdac, type: 3}
       propertyPath: playerO2
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8539419387216175893, guid: 7504a6914893a194384f0302255afdac, type: 3}
+      propertyPath: entityNumber
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 8539419387216175893, guid: 7504a6914893a194384f0302255afdac, type: 3}
+      propertyPath: enemyHealth.Array.size
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 8539419387216175893, guid: 7504a6914893a194384f0302255afdac, type: 3}
+      propertyPath: facingEnemy.Array.size
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 8539419387216175893, guid: 7504a6914893a194384f0302255afdac, type: 3}
+      propertyPath: enemyTrigger.Array.size
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 8539419387216175893, guid: 7504a6914893a194384f0302255afdac, type: 3}
+      propertyPath: facingPlayer.Array.size
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 8539419387216175893, guid: 7504a6914893a194384f0302255afdac, type: 3}
+      propertyPath: playerTrigger.Array.size
+      value: 1000
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7504a6914893a194384f0302255afdac, type: 3}

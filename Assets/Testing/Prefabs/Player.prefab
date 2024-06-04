@@ -173,16 +173,16 @@ MonoBehaviour:
   playerAnimator: {fileID: 7185144831185422876}
   playerCollider: {fileID: 5259299927742517916}
   walkThrust: 2000
-  maxVelocity: 10
+  maxVelocity: 7.5
   dashImpulse: 15
-  dashCooldown: 0
+  dashCooldown: 3
   landedRaycastDistance: 0.33
   landedRaycastLayers:
     serializedVersion: 2
     m_Bits: 7168
-  jumpImpulse: 12
+  jumpImpulse: 10
   coyoteTime: 0.1
-  jumpThrust: 750
+  jumpThrust: 650
   jumpThrustTime: 1
   dropRaycastLayers:
     serializedVersion: 2

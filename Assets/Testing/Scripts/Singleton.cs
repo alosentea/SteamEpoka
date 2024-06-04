@@ -59,12 +59,15 @@ public class Singleton : MonoBehaviour
 
         _auxO2Time += Time.deltaTime;
 
-        if (Input.GetKey(KeyCode.Escape) && !_isInstantiated && SceneManager.GetActiveScene().name == "TestScene_001")
+        if (Input.GetKey(KeyCode.Escape) && !_isInstantiated)
         {
-            Time.timeScale = 0;
-            var canvas = Instantiate(gameplayMenu);
-            canvas.name = "Gameplay Menu";
-            _isInstantiated = true;
+            if (SceneManager.GetActiveScene().name == "Ciudad" || SceneManager.GetActiveScene().name == "Cielo")
+            {
+                Time.timeScale = 0;
+                var canvas = Instantiate(gameplayMenu);
+                canvas.name = "Gameplay Menu";
+                _isInstantiated = true;
+            }
         }
 
         if (continueButtonEnabled)

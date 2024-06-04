@@ -9,9 +9,9 @@ EditorBuildSettings:
     path: Assets/Testing/Scenes/TestScene_Menu.unity
     guid: 7312828281524a342a71bfe4307422ff
   - enabled: 1
-    path: Assets/Testing/Scenes/TestScene_001.unity
-    guid: 2cda990e2423bbf4892e6590ba056729
+    path: Assets/Testing/Scenes/Ciudad.unity
+    guid: 7b50126c523504d4cb043350f95078d7
   - enabled: 1
-    path: Assets/Testing/Scenes/TestScene_Muerte.unity
-    guid: f0706c0a18e197d43be752a0be2f70ba
+    path: Assets/Testing/Scenes/Cielo.unity
+    guid: 2cda990e2423bbf4892e6590ba056729
   m_configObjects: {}

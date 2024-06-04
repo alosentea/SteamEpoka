@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-using UnityEngine.Serialization;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovement2 : MonoBehaviour
 {
@@ -155,6 +155,8 @@ public class PlayerMovement2 : MonoBehaviour
                 _checkpointAnimator = collision.GetComponent<Animator>();
                 _checkpointAnimator.SetBool("Checkpoint", true);
                 checkpointCoords = collision.gameObject.transform.position;
+                _singleton.playerDamage = 0;
+                _singleton.playerO2 = 1000;
             }
             else
             {
@@ -164,8 +166,20 @@ public class PlayerMovement2 : MonoBehaviour
                     _checkpointAnimator = collision.GetComponent<Animator>();
                     _checkpointAnimator.SetBool("Checkpoint", true);
                     checkpointCoords = collision.gameObject.transform.position;
+                    _singleton.playerDamage = 0;
+                    _singleton.playerO2 = 1000;
                 }
             }
+        }
+
+        if (collision.tag == "CieloTrigger")
+        {
+            SceneManager.LoadScene("Cielo", LoadSceneMode.Single);
+        }
+        
+        if (collision.tag == "StartMenuTrigger")
+        {
+            SceneManager.LoadScene("TestScene_Menu", LoadSceneMode.Single);
         }
     }
     private void OnTriggerExit2D(Collider2D collision)

@@ -7,6 +7,8 @@ TagManager:
   - Enemy
   - Singleton
   - Checkpoint
+  - CieloTrigger
+  - StartMenuTrigger
   layers:
   - Default
   - TransparentFX
@@ -22,7 +24,7 @@ TagManager:
   - PlatformsA
   - PlatformsB
   - Player
-  - 
+  - Enemies
   - 
   - 
   - 
