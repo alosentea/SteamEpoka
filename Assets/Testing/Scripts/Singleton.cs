@@ -1,7 +1,6 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Singleton : MonoBehaviour
 {
@@ -41,10 +40,13 @@ public class Singleton : MonoBehaviour
         facingPlayer = new bool[entityNumber];
     }
 
-    
-    
-    
 
+
+
+
+    public Canvas gameplayMenu;
+    private bool _isInstantiated;
+    
     private void Update()
     {
         if (_auxO2Time >= 1)
@@ -54,6 +56,14 @@ public class Singleton : MonoBehaviour
         }
 
         _auxO2Time += Time.deltaTime;
+
+        if (Input.GetKey(KeyCode.Escape) && !_isInstantiated && SceneManager.GetActiveScene().name == "TestScene_001")
+        {
+            Time.timeScale = 0;
+            var canvas = Instantiate(gameplayMenu);
+            canvas.name = "Gameplay Menu";
+            _isInstantiated = true;
+        }
     }
 
 

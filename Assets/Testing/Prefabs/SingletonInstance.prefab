@@ -44,6 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5721d299f4c6301489dc6ca2bbef5d9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameplayMenu: {fileID: 5244291329844061524, guid: f1e50dae0ce99f046b809737a66fab3a, type: 3}
   entityNumber: 10
   playerDamage: 0
   enemyHealth: 00000000000000000000000000000000000000000000000000000000000000000000000000000000

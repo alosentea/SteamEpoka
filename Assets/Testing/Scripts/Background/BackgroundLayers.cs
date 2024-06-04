@@ -1,8 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class BackgroundLayers : MonoBehaviour
 {
@@ -22,14 +18,14 @@ public class BackgroundLayers : MonoBehaviour
     {
         if (playerRigidbody2D.transform.position.x - transform.position.x >= 16)
         {
-            var Clone = Instantiate(gameObject, new Vector3(transform.position.x + 31.98f, transform.position.y, transform.position.z), Quaternion.identity);
-            Clone.name = gameObject.name;
+            var clone = Instantiate(gameObject, new Vector3(transform.position.x + 31.98f, transform.position.y, transform.position.z), Quaternion.identity);
+            clone.name = gameObject.name;
             Destroy(gameObject);
         }
         if (playerRigidbody2D.transform.position.x - transform.position.x <= -16)
         {
-            var Clone = Instantiate(gameObject, new Vector3(transform.position.x - 31.98f, transform.position.y, transform.position.z), Quaternion.identity);
-            Clone.name = gameObject.name;
+            var clone = Instantiate(gameObject, new Vector3(transform.position.x - 31.98f, transform.position.y, transform.position.z), Quaternion.identity);
+            clone.name = gameObject.name;
             Destroy(gameObject);
         }
     }
