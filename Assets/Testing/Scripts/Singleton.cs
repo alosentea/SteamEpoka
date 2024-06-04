@@ -46,6 +46,8 @@ public class Singleton : MonoBehaviour
 
     public Canvas gameplayMenu;
     private bool _isInstantiated;
+    public bool continueButtonEnabled;
+    public bool mainMenuButtonEnabled;
     
     private void Update()
     {
@@ -63,6 +65,20 @@ public class Singleton : MonoBehaviour
             var canvas = Instantiate(gameplayMenu);
             canvas.name = "Gameplay Menu";
             _isInstantiated = true;
+        }
+
+        if (continueButtonEnabled)
+        {
+            Time.timeScale = 1;
+            _isInstantiated = false;
+            continueButtonEnabled = false;
+        }
+
+        if (mainMenuButtonEnabled)
+        {
+            Time.timeScale = 1;
+            _isInstantiated = false;
+            mainMenuButtonEnabled = false;
         }
     }
 
