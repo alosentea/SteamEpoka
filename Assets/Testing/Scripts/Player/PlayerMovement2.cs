@@ -79,15 +79,30 @@ public class PlayerMovement2 : MonoBehaviour
     // "Checkpoint" method variables //
     private Animator _checkpointAnimator;
     
+    // "SceneTransition" method variables //
+    private bool _isTransition;
+    public GameObject sceneTransitionCanvas;
+    public Color sceneTransitionCanvasColor;
+    private bool _transitionFinished;
+    private string _transitionScene;
+    
+    // "Damage" method variables //
+    private int _lastHealth;
+    private bool _isDamage;
     
     
     
     
     void Awake()
     {
+        sceneTransitionCanvasColor = sceneTransitionCanvas.GetComponent<SpriteRenderer>().color;
+        sceneTransitionCanvasColor.a = 0;
+        sceneTransitionCanvas.GetComponent<SpriteRenderer>().color = sceneTransitionCanvasColor;
+        
         _singleton = GameObject.FindWithTag("Singleton").GetComponent<Singleton>();
         
         _singleton.playerDamage = 0;
+        _lastHealth = 0;
     }
     
     
@@ -101,17 +116,17 @@ public class PlayerMovement2 : MonoBehaviour
         
         Squatting();
         
-        if (!_isSquatting && _isDashing == 0 && !_isAttacking)
+        if (!_isSquatting && _isDashing == 0 && !_isAttacking && !_isDamage)
         {
             Jump();
         }
 
-        if (!_isJumping && !_isSquatting)
+        if (!_isJumping && !_isSquatting && !_isDamage)
         {
             Dash();
         }
         
-        if (_isDashing == 0 && !_isSquatting && !_isAttacking)
+        if (_isDashing == 0 && !_isSquatting && !_isAttacking && !_isDamage)
         {
             Walk();
         }
@@ -126,12 +141,22 @@ public class PlayerMovement2 : MonoBehaviour
         {
             CancelHorizontalVelocity();
         }
+
+        if (!_isDamage)
+        {
+            Dropping();
         
-        Dropping();
-        
-        Attack();
+            Attack();
+        }
         
         Die();
+        
+        Damage();
+
+        if (_isTransition)
+        {
+            SceneTransition();
+        }
     }
     
     
@@ -171,15 +196,23 @@ public class PlayerMovement2 : MonoBehaviour
                 }
             }
         }
-
+        
+        if (collision.tag == "CiudadTrigger")
+        {
+            _isTransition = true;
+            _transitionScene = "Ciudad";
+        }
+        
         if (collision.tag == "CieloTrigger")
         {
-            SceneManager.LoadScene("Cielo", LoadSceneMode.Single);
+            _isTransition = true;
+            _transitionScene = "Cielo";
         }
         
         if (collision.tag == "StartMenuTrigger")
         {
-            SceneManager.LoadScene("TestScene_Menu", LoadSceneMode.Single);
+            _isTransition = true;
+            _transitionScene = "TestScene_Menu";
         }
     }
     private void OnTriggerExit2D(Collider2D collision)
@@ -640,5 +673,48 @@ public class PlayerMovement2 : MonoBehaviour
             _singleton.playerDamage = 0;
             _singleton.playerO2 = 1000;
         }
+    }
+
+    
+    
+    private void SceneTransition()
+    {
+        if (!_transitionFinished)
+        {
+            sceneTransitionCanvasColor.a += Time.deltaTime;
+            sceneTransitionCanvas.GetComponent<SpriteRenderer>().color = sceneTransitionCanvasColor;
+        }
+
+        if (sceneTransitionCanvasColor.a >= 1)
+        {
+            _transitionFinished = true;
+        }
+
+        if (_transitionFinished)
+        {
+            SceneManager.LoadScene(_transitionScene, LoadSceneMode.Single);
+        }
+    }
+    
+    
+    
+    private void Damage()
+    {
+        if (_lastHealth < _singleton.playerDamage)
+        {
+            playerAnimator.SetBool("Damage", true);
+            _isDamage = true;
+        }
+
+        if (playerAnimator.GetCurrentAnimatorStateInfo(0).IsName("PlayerAnimations_Daño"))
+        {
+            if (playerAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.7)
+            {
+                playerAnimator.SetBool("Damage", false);
+                _isDamage = false;
+            }
+        }
+
+        _lastHealth = _singleton.playerDamage;
     }
 }

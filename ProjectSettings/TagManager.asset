@@ -9,6 +9,7 @@ TagManager:
   - Checkpoint
   - CieloTrigger
   - StartMenuTrigger
+  - CiudadTrigger
   layers:
   - Default
   - TransparentFX
